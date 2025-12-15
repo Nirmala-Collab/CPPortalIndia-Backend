@@ -1,6 +1,5 @@
 # CP Portal – Backend
 Backend service for the **CP Portal** providing authentication, user management, and access control for internal and external users.  
-Built with **Node.js, Express, PostgreSQL, and Sequelize**
 ---
 ## 🚀 Features
 ### Authentication
