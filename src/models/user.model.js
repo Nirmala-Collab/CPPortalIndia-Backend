@@ -28,6 +28,12 @@ const User = sequelize.define(
      allowNull: true,
      field: "corporate_id",
    },
+
+    companyId: {
+     type: DataTypes.UUID,
+     allowNull: true,
+     field: "company_id",
+   },
    endDate: {
      type: DataTypes.DATE,
      allowNull: true,
@@ -38,10 +44,10 @@ const User = sequelize.define(
      allowNull: true,
      field: "relationship_manager",
    },
-   reportingManager: {
+   claimsManager: {
      type: DataTypes.STRING(255),
      allowNull: true,
-     field: "reporting_manager",
+     field: "claims_manager",
    },
    roleId: {
      type: DataTypes.UUID,

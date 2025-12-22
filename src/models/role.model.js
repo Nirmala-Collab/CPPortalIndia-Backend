@@ -13,7 +13,6 @@ Role.init(
    roleType: {
      type: DataTypes.STRING(100),
      allowNull: false,
-     unique: true,
      field: "role_type",
    },
    // Example: "internal", "external", "business"

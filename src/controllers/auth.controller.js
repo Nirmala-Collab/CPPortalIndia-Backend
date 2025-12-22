@@ -7,7 +7,7 @@ import {
 import { sendOtpEmail } from "../services/email.service.js";
 import { generateJwtToken } from "../services/jwt.service.js";
 import { createRefreshToken, invalidateRefreshToken } from "../services/refreshToken.service.js";
-import { authenticateWithAD } from "../services/ldap.service.js";
+// import { authenticateWithAD } from "../services/ldap.service.js";
 const { User, Otp, AuthenticationType } = db;
 
 
