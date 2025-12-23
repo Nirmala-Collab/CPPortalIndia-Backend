@@ -15,7 +15,7 @@ Otp.init(
      allowNull: false,
      field: "user_id",
    },
-   // 6-digit OTP (we'll store as string)
+   // 5-digit OTP (we'll store as string)
    otpCode: {
      type: DataTypes.STRING(10),
      allowNull: false,

@@ -5,7 +5,7 @@ const { Otp } = db;
 const OTP_EXPIRY_MINUTES = 2;
 // For EMAIL OTP
 export async function createEmailOtpForUser(user) {
- const otpCode = generateNumericOtp(6);
+ const otpCode = generateNumericOtp(5);
  const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
  // Invalidate previous unused EMAIL OTPs
  await Otp.update(
@@ -29,7 +29,7 @@ export async function createEmailOtpForUser(user) {
 }
 // For PHONE OTP
 export async function createPhoneOtpForUser(user) {
- const otpCode = generateNumericOtp(6);
+ const otpCode = generateNumericOtp(5);
  const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
  // Invalidate previous unused PHONE OTPs
  await Otp.update(
