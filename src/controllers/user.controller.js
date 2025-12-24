@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+// import { maskEmail,maskPhone } from "../utils/mask.js";
 const {
  User,
  Role,
@@ -27,6 +28,7 @@ export async function createUser(req, res) {
      authTypeId,
      accessRights,
      isActive,
+     deleted = false,
    } = req.body;
    /* -------------------- BASIC REQUIRED VALIDATION -------------------- */
    if (
@@ -40,7 +42,8 @@ export async function createUser(req, res) {
      !claimsManager ||
      !endDate ||
      !authTypeId ||
-     isActive === undefined
+     isActive === undefined || 
+     deleted === undefined
    ) {
      return res.status(400).json({
        message: "All fields are mandatory for create user",
@@ -117,13 +120,14 @@ export async function createUser(req, res) {
      claimsManager,
      endDate,
      isActive,
+     deleted,
      authTypeId,
    });
    /* -------------------- ASSIGN ACCESS RIGHTS -------------------- */
    await user.setAccessRights(accessRights);
    return res.status(201).json({
      message: "User created successfully",
-     user,
+     user
    });
  } catch (error) {
    console.error("Create User Error:", error);
@@ -152,6 +156,7 @@ export async function updateUser(req, res) {
      authTypeId,
      accessRights,
      isActive,
+     deleted = false,
    } = req.body;
    // Mandatory validation
    if (
@@ -164,7 +169,8 @@ export async function updateUser(req, res) {
      !claimsManager ||
      !endDate ||
      !authTypeId ||
-     isActive === undefined
+     isActive === undefined||
+     deleted === undefined
    ) {
      return res.status(400).json({
        message: "All fields are mandatory for update",
@@ -206,6 +212,7 @@ export async function updateUser(req, res) {
      claimsManager,
      endDate,
      isActive,
+     deleted,
      authTypeId
    });
    // Update access rights
@@ -280,7 +287,7 @@ export async function deleteUser(req, res) {
    if (!user) {
      return res.status(404).json({ message: "User not found" });
    }
-   await user.update({ isActive: false });
+   await user.update({ deleted: true });
    return res.status(200).json({
      message: "User deactivated successfully",
    });

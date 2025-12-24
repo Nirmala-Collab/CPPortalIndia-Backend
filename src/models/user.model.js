@@ -69,6 +69,11 @@ const User = sequelize.define(
      defaultValue: true,
      field: "is_active",
    },
+   deleted:{
+    type:DataTypes.BOOLEAN,
+    defaultValue:false,
+    field:'deleted'
+   }
  },
  {
    tableName: "users",
