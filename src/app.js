@@ -1,12 +1,19 @@
 // src/app.js
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import db from "./models/index.js";
 import { seedAuthenticationTypes } from "./seed/authenticationTypes.seed.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from './routes/user.routes.js'
 dotenv.config();
 const app = express();
+
+app.use(cors({
+  origin:'http://localhost:5173',
+  methods:['GET','POST','PUT','PATCH','DELETE'],
+  credentials: true
+}))
 app.use(express.json());
 app.get("/health", (req, res) => {
  res.json({ status: "OK" });
