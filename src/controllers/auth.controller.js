@@ -10,7 +10,7 @@ import { sendOtpEmail } from "../services/email.service.js";
 const { User, Otp, AuthenticationType } = db;
 
 // --- Config toggles ---
-const RETURN_OTP_IN_RESPONSE = false; // true only for local dev
+const RETURN_OTP_IN_RESPONSE = true; // true only for local dev
 const OTP_MAX_ATTEMPTS = 5;
 
 /**
@@ -122,7 +122,7 @@ export async function sendOtp(req, res) {
 
       return res.status(200).json({
         message: "OTP sent",
-        ...(RETURN_OTP_IN_RESPONSE ? { otp: otpCode } : {}),
+       otp:otpCode
       });
     }
 
