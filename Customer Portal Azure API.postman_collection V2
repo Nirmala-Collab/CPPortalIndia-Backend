@@ -1,0 +1,658 @@
+{
+	"info": {
+		"_postman_id": "0c032a3e-0ada-42b3-a4da-2a17bb21ccf2",
+		"name": "Customer Portal Azure API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "41290771"
+	},
+	"item": [
+		{
+			"name": "Customer Portal - oAuth Token Generation Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "b4d4ad2c166e4470bec58deaf621ba76",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"grant_type\": \"client_credentials\",\r\n    \"clientId\": \"67c8d2d4-ee1b-445c-983f-a0489dccc70f\",\r\n    \"clientSecret\": \"LRv8Q~CuQ65PSCU7W6HeamNnF0aUuCOl4y7G2aCb\",\r\n    \"scope\": \"api://65ff5402-594a-4c9c-b9a2-53c01e013df2/.default\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://integrationsuat.lockton-india.com/oauth/generate-access-token"
+			},
+			"response": []
+		},
+		{
+			"name": "Policy Overview",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEwMTI5LCJuYmYiOjE3NjY0MTAxMjksImV4cCI6MTc2NjQxNDAyOSwiYWlvIjoiazJKZ1lNaGZ2N1I1NTlsMUFsVzdqbkczSlA5cUJ3QT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImI4cXB4RmlfS0VTTGVNa2xnS3NaQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoiUEYydmhrekM3U0x5bUdrUGJDWFhCdXVUREM3WXlLb2FUbzdSd3owY2hjOEJZWE5wWVhOdmRYUm9aV0Z6ZEMxa2MyMXoifQ.AEhLjLFytqyNc8F2JJVurZvRaaCwjeFMKD7c0vUBd7bmArqaG-Abn4hpDfa8OQvxUx97feGzSQ6fy5C--WVhb6P52oYcyPdePbttcKB-VWjTrP4F6l2GkaMXzNe6vH65lzmjALcy9wKgv_-X9fyq1yHjULoStZvNul_GLqTFGVTObnYv3b00Y8ac9d_4BiUYKJFuLNlkh-8dt7txGqz8DnKuP8hESwgEpWd90jiKkQYNaDG7LHFuchdxN5cjwL335Pj_5g_ycB5Yb433By53AQ6iqdwV7zZGCBUXS12Djc8MuLmeSUe56xec_pFtAHGAJqTaAOiZfGqeSaMEPWaSdQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/PolicyOverview?fy_from_period=01-April-2025&fy_to_period=02-December-2025&client_ids={1,2,10,15,20,22,25,27,30,37,41,46,50}&vertical_id=[1,2,3,4,5]",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"PolicyOverview"
+					],
+					"query": [
+						{
+							"key": "fy_from_period",
+							"value": "01-April-2025"
+						},
+						{
+							"key": "fy_to_period",
+							"value": "02-December-2025"
+						},
+						{
+							"key": "client_group_ids",
+							"value": "{}",
+							"disabled": true
+						},
+						{
+							"key": "client_ids",
+							"value": "{1,2,10,15,20,22,25,27,30,37,41,46,50}"
+						},
+						{
+							"key": "user_id",
+							"value": "imdadhussain.sunsara@lockton.com",
+							"disabled": true
+						},
+						{
+							"key": "vertical_id",
+							"value": "[1,2,3,4,5]"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Policy Claims Check",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/policyClaimsCheck?lockton_ref_id=14523",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"policyClaimsCheck"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "14523"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Policy Endorsements",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/policyEndorsements?lockton_ref_id=14523",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"policyEndorsements"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "14523"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Policy Downloads",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/policyDownload?lockton_ref_id=4769",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"policyDownload"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "4769"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Claims Overview",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/claimsOverview?client_ids={1,2,10,15,20,22,25,27,30,37,41,46,50}&fy_from_period=01-April-2025&fy_to_period=02-December-2025",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"claimsOverview"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "pending_documents",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "client_ids",
+							"value": "{1,2,10,15,20,22,25,27,30,37,41,46,50}"
+						},
+						{
+							"key": "client_group_ids",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "vertical_id",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "fy_from_period",
+							"value": "01-April-2025"
+						},
+						{
+							"key": "fy_to_period",
+							"value": "02-December-2025"
+						},
+						{
+							"key": "user_id",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pending/Uploaded Documents",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/claimDocuments?lockton_ref_id=121024",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"claimDocuments"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "121024"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Renewals",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/renewals?client_ids={1,2,10,15,20,22,25,27,30,37,41,46,50,3,4,5,6,,7,8,9,12,14,16,18,26,28,55}",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"renewals"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "India",
+							"disabled": true
+						},
+						{
+							"key": "client_group_ids",
+							"value": "{1,2,3,4,5}",
+							"disabled": true
+						},
+						{
+							"key": "client_ids",
+							"value": "{1,2,10,15,20,22,25,27,30,37,41,46,50,3,4,5,6,,7,8,9,12,14,16,18,26,28,55}"
+						},
+						{
+							"key": "vertical_id",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "user_id",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "period",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/dashboard?fy_from_period=1-April-2024&fy_to_period=31-March-2025&country=India&client_group_ids=[\"34\", \"234\"]&client_ids=[\"1234\", \"2345\", \"232\"]&user_id=hitesh.shah@lockton.com",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"dashboard"
+					],
+					"query": [
+						{
+							"key": "fy_from_period",
+							"value": "1-April-2024"
+						},
+						{
+							"key": "fy_to_period",
+							"value": "31-March-2025"
+						},
+						{
+							"key": "country",
+							"value": "India"
+						},
+						{
+							"key": "client_group_ids",
+							"value": "[\"34\", \"234\"]"
+						},
+						{
+							"key": "client_ids",
+							"value": "[\"1234\", \"2345\", \"232\"]"
+						},
+						{
+							"key": "user_id",
+							"value": "hitesh.shah@lockton.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboards-Premium Summery",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEwMTI5LCJuYmYiOjE3NjY0MTAxMjksImV4cCI6MTc2NjQxNDAyOSwiYWlvIjoiazJKZ1lNaGZ2N1I1NTlsMUFsVzdqbkczSlA5cUJ3QT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImI4cXB4RmlfS0VTTGVNa2xnS3NaQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoiUEYydmhrekM3U0x5bUdrUGJDWFhCdXVUREM3WXlLb2FUbzdSd3owY2hjOEJZWE5wWVhOdmRYUm9aV0Z6ZEMxa2MyMXoifQ.AEhLjLFytqyNc8F2JJVurZvRaaCwjeFMKD7c0vUBd7bmArqaG-Abn4hpDfa8OQvxUx97feGzSQ6fy5C--WVhb6P52oYcyPdePbttcKB-VWjTrP4F6l2GkaMXzNe6vH65lzmjALcy9wKgv_-X9fyq1yHjULoStZvNul_GLqTFGVTObnYv3b00Y8ac9d_4BiUYKJFuLNlkh-8dt7txGqz8DnKuP8hESwgEpWd90jiKkQYNaDG7LHFuchdxN5cjwL335Pj_5g_ycB5Yb433By53AQ6iqdwV7zZGCBUXS12Djc8MuLmeSUe56xec_pFtAHGAJqTaAOiZfGqeSaMEPWaSdQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/dashboard?fy_from_period=01-April-2025&fy_to_period=02-December-2025&client_ids={1,2,10,15,20,22,25,27,30,37,41,46,50}&section=2&user_id=imdadhussain.sunsara@lockton.com",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"dashboard"
+					],
+					"query": [
+						{
+							"key": "fy_from_period",
+							"value": "01-April-2025"
+						},
+						{
+							"key": "fy_to_period",
+							"value": "02-December-2025"
+						},
+						{
+							"key": "client_ids",
+							"value": "{1,2,10,15,20,22,25,27,30,37,41,46,50}"
+						},
+						{
+							"key": "section",
+							"value": "2"
+						},
+						{
+							"key": "user_id",
+							"value": "imdadhussain.sunsara@lockton.com"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location --globoff 'https://integrationsuat.lockton-india.com/customer_portal/dashboard?fy_from_period=01-April-2025&am… \\\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEwNjI4LCJuYmYiOjE3NjY0MTA2MjgsImV4cCI6MTc2NjQxNDUyOCwiYWlvIjoiazJKZ1lPaVl0YTl2b21YUzdQUGZVNWJ0Rk9PK0NRQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImQ0V2tsc3AtM2tlUGFFa2s2MlFlQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoid3FTUV9qeXBZTGltSUprRlFLeGh5M0N1RjNSQ1ZUcE5KUk1mZUwwY29ZMEJhbUZ3WVc1bFlYTjBMV1J6YlhNIn0.LK2aqW6EBwPipU4V1TkHjFXNCcFiUNCt8OL6mGNVRGlEwDjOXDJ-OhUWkI9buvCzLQjHz_vpGsR9gXXU5n_y2iyIxoLDRmIAYkET55EANst2iXSKdbTHBqXPB4H-5cR_yco9hEr_KVtwD9vSeW-f44H2Us557gI3OjZjdk-ePc93PV2vWY5ViI6qtn2NkIaI_S0QFt7-aXt9i31IXKEv68grqhRBV5Su57YHrm6gykUAKDZ2Hj-gpxl8XjUyTcqONryP2luTxZBPGFn6nSDH0_8EsdG2w9ebPblubmb-zm-ioMiJYkg9WoD-DgFiv-eAXH6u5ZrQ-J0PHm6Q5pjQSw' \\\n--header 'Ocp-Apim-Subscription-Key: 11b6bc6249b04d9e98a352afe01853c9'"
+			},
+			"response": []
+		},
+		{
+			"name": "Claim Details",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEzMTg2LCJuYmYiOjE3NjY0MTMxODYsImV4cCI6MTc2NjQxNzA4NiwiYWlvIjoiazJKZ1lJanRPR0h3NFp5RTBoeUg4ak1KaHhic0FBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6Ik9pYW1WeVd1ekVhY3NYX0lsY3B4QUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoiUGZCWUhtYU1ZZWxUTmFjQmZuajlOWmtOZkxPZWRGamp6LVk4M19CLThZQUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.I8AA9cb85V5AEIipxo0JHnCZcGrw001vbD5tEYX31Ka_emSiqudxkyS5P3v5tDmR-ZK5A_DNeb_Saw2eEpZZ3lAfFThXeb5PAYo4St9dV2gd_W_W_xRBFhqNepCGADrsvelAKvXmcFg7tfSBX-mmNXiJcPCM7H6pXBHmmOnAgarQxv2871jrlqKfnHeCW90TTffIFsykZPZ6WzSsICmKoIv5iQzgO7cgI7S0tXIAszTD06ekvGRdjAW84Oh7ErhI2YrwxJ9lrkQP8iPZ2jsarjqpwRHSuj2PJQ1MR4rXkU9N-3-kAgZdxZb5u17RuYvTli6nhnQygkdWzK0s3kDYaA"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/claimDetails?lockton_ref_id=123456",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"claimDetails"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "123456"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://integrationsuat.lockton-india.com/customer_portal/claimDetails?lockton_ref_id=123456' \\\n--header 'Authorization: Bearer ' \\\n--header 'Ocp-Apim-Subscription-Key: 11b6bc6249b04d9e98a352afe01853c9'"
+			},
+			"response": []
+		},
+		{
+			"name": "Notifications",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDAyMjEzLCJuYmYiOjE3NjY0MDIyMTMsImV4cCI6MTc2NjQwNjExMywiYWlvIjoiazJKZ1lKZ3A5NFB4cWFoMGM5YldPZUY5a29zdkFBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6ImVUZld3ODl5cUVLUmVJMXlIWjkxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoibkYwTzlySjdmYTdmdXpuc2RZSmZzaWhKREVuMWFJTFFNZGFJQ2ZlVndRSUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.mjim2ekd4Yfkr9XRkVYAhvpYEp2JQF4ah1IlxBsGNv6K6GbFrqKJLp6cW0DwDlJnUOAGeRsP9lcaOxYQhPwD0rUTJn0Y-5_5hQT0OqmNdoKEbpTL7_nuwGVCFboibjqcoed3l2bHwXM0YQ6DsStJWrTTQ5P9C8h7TrxAFly3DNYMD6Ma5vrjrt-MfHK5ER0abU0A6ROoSRsOwvVVBjzF1ijIN5M4J5_ZmLxPZ-9JFOGElWuV3f0zarTAqIaBt2ytv1nClVmV71fhSZaL1BdXe86A2PjiaMwjUvp_YVfUhbHLRVPN4M8qP3g6hj8wsn1TPcs3ZP15yCXeNagteZ_GbQ",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": "https://integrationsuat.lockton-india.com/customer_portal/notifications"
+			},
+			"response": []
+		},
+		{
+			"name": "Progress Tracker",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEzMTg2LCJuYmYiOjE3NjY0MTMxODYsImV4cCI6MTc2NjQxNzA4NiwiYWlvIjoiazJKZ1lJanRPR0h3NFp5RTBoeUg4ak1KaHhic0FBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6Ik9pYW1WeVd1ekVhY3NYX0lsY3B4QUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoiUGZCWUhtYU1ZZWxUTmFjQmZuajlOWmtOZkxPZWRGamp6LVk4M19CLThZQUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.I8AA9cb85V5AEIipxo0JHnCZcGrw001vbD5tEYX31Ka_emSiqudxkyS5P3v5tDmR-ZK5A_DNeb_Saw2eEpZZ3lAfFThXeb5PAYo4St9dV2gd_W_W_xRBFhqNepCGADrsvelAKvXmcFg7tfSBX-mmNXiJcPCM7H6pXBHmmOnAgarQxv2871jrlqKfnHeCW90TTffIFsykZPZ6WzSsICmKoIv5iQzgO7cgI7S0tXIAszTD06ekvGRdjAW84Oh7ErhI2YrwxJ9lrkQP8iPZ2jsarjqpwRHSuj2PJQ1MR4rXkU9N-3-kAgZdxZb5u17RuYvTli6nhnQygkdWzK0s3kDYaA"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/progressTracker?lockton_ref_id=121024",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"progressTracker"
+					],
+					"query": [
+						{
+							"key": "lockton_ref_id",
+							"value": "121024"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://integrationsuat.lockton-india.com/customer_portal/progressTracker?lockton_ref_id=121024' \\\n--header 'Authorization: Bearer ' \\\n--header 'Ocp-Apim-Subscription-Key: 11b6bc6249b04d9e98a352afe01853c9'"
+			},
+			"response": []
+		},
+		{
+			"name": "Loss Ratio",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyIsImtpZCI6InJ0c0ZULWItN0x1WTdEVlllU05LY0lKN1ZuYyJ9.eyJhdWQiOiJhcGk6Ly82NWZmNTQwMi01OTRhLTRjOWMtYjlhMi01M2MwMWUwMTNkZjIiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wZmU3OWNmNC04MjI0LTQxNGEtYWE3NC00OTFkZWVlZGViNzgvIiwiaWF0IjoxNzY2NDEzMTg2LCJuYmYiOjE3NjY0MTMxODYsImV4cCI6MTc2NjQxNzA4NiwiYWlvIjoiazJKZ1lJanRPR0h3NFp5RTBoeUg4ak1KaHhic0FBQT0iLCJhcHBpZCI6IjY3YzhkMmQ0LWVlMWItNDQ1Yy05ODNmLWEwNDg5ZGNjYzcwZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OC8iLCJvaWQiOiJjZmM2NTZjNy01ZTNmLTQxMmEtYWU2Mi0zYzdlZDUxNWJmZjkiLCJyaCI6IjEuQWNZQTlKem5EeVNDU2tHcWRFa2Q3dTNyZUFKVV8yVktXWnhNdWFKVHdCNEJQZktOQVFER0FBLiIsInN1YiI6ImNmYzY1NmM3LTVlM2YtNDEyYS1hZTYyLTNjN2VkNTE1YmZmOSIsInRpZCI6IjBmZTc5Y2Y0LTgyMjQtNDE0YS1hYTc0LTQ5MWRlZWVkZWI3OCIsInV0aSI6Ik9pYW1WeVd1ekVhY3NYX0lsY3B4QUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfZnRkIjoiUGZCWUhtYU1ZZWxUTmFjQmZuajlOWmtOZkxPZWRGamp6LVk4M19CLThZQUJhMjl5WldGalpXNTBjbUZzTFdSemJYTSJ9.I8AA9cb85V5AEIipxo0JHnCZcGrw001vbD5tEYX31Ka_emSiqudxkyS5P3v5tDmR-ZK5A_DNeb_Saw2eEpZZ3lAfFThXeb5PAYo4St9dV2gd_W_W_xRBFhqNepCGADrsvelAKvXmcFg7tfSBX-mmNXiJcPCM7H6pXBHmmOnAgarQxv2871jrlqKfnHeCW90TTffIFsykZPZ6WzSsICmKoIv5iQzgO7cgI7S0tXIAszTD06ekvGRdjAW84Oh7ErhI2YrwxJ9lrkQP8iPZ2jsarjqpwRHSuj2PJQ1MR4rXkU9N-3-kAgZdxZb5u17RuYvTli6nhnQygkdWzK0s3kDYaA",
+						"type": "text"
+					},
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "11b6bc6249b04d9e98a352afe01853c9",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://integrationsuat.lockton-india.com/customer_portal/lossRatio?fy_from_period= 1-April-2024,&fy_to_period= 31-March-2025,&country= India,&vertical_id= [1, 4],&pending_documents= YES,&client_group_ids= [34, 234],&client_ids= [1234, 2345, 2322],&user_id= hitesh.shah@lockton.com",
+					"protocol": "https",
+					"host": [
+						"integrationsuat",
+						"lockton-india",
+						"com"
+					],
+					"path": [
+						"customer_portal",
+						"lossRatio"
+					],
+					"query": [
+						{
+							"key": "fy_from_period",
+							"value": " 1-April-2024,"
+						},
+						{
+							"key": "fy_to_period",
+							"value": " 31-March-2025,"
+						},
+						{
+							"key": "country",
+							"value": " India,"
+						},
+						{
+							"key": "vertical_id",
+							"value": " [1, 4],"
+						},
+						{
+							"key": "pending_documents",
+							"value": " YES,"
+						},
+						{
+							"key": "client_group_ids",
+							"value": " [34, 234],"
+						},
+						{
+							"key": "client_ids",
+							"value": " [1234, 2345, 2322],"
+						},
+						{
+							"key": "user_id",
+							"value": " hitesh.shah@lockton.com"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
