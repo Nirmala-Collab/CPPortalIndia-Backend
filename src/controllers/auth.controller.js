@@ -6,7 +6,7 @@ import { createRefreshToken, invalidateRefreshToken } from "../services/refreshT
 import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.service.js";
 import { sendOtpEmail } from "../services/email.service.js";
 // import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
-
+import { logAudit } from "../utils/auditLogger.js";
 const { User, Otp, AuthenticationType } = db;
 
 // --- Config toggles ---

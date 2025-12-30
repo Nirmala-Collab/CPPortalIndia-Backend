@@ -1,5 +1,5 @@
 import sequelize from "../config/db.js";
-
+import AuditLog from "./auditLog.model.js";
 // MODELS
 
 import User from "./user.model.js";
@@ -187,6 +187,7 @@ const db = {
   AccessRight,
 
   UserAccessRight,
+  AuditLog,
 
 };
 

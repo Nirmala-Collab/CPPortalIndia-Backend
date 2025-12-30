@@ -5,6 +5,7 @@ import db from "./models/index.js";
 import { seedAuthenticationTypes } from "./seed/authenticationTypes.seed.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from './routes/user.routes.js'
+import roleRoutes from './routes/role.routes.js'
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -26,4 +27,5 @@ app.use("/auth", authRoutes);
 })();
 
 app.use("/api/users", userRoutes);
+app.use("/api/roles",roleRoutes);
 export default app;
