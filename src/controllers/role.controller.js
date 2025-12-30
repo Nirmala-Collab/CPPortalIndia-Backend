@@ -1,5 +1,7 @@
-import { Role } from "../models/index.js";
-//
+import db from "../models/index.js";
+const { Role } = db;
+
+
 // CREATE ROLE
 //
 export async function createRole(req, res) {
