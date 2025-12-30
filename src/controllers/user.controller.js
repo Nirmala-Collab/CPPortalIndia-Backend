@@ -1,5 +1,5 @@
 import db from "../models/index.js";
-// import { maskEmail,maskPhone } from "../utils/mask.js";
+import { maskEmail,maskPhone } from "../utils/mask.js";
 const {
  User,
  Role,
@@ -127,7 +127,10 @@ export async function createUser(req, res) {
    await user.setAccessRights(accessRights);
    return res.status(201).json({
      message: "User created successfully",
-     user
+     id:user.id,
+     email:maskEmail(email),
+     phone:maskPhone(phone),
+     userType:user.userType
    });
  } catch (error) {
    console.error("Create User Error:", error);

@@ -25,6 +25,7 @@ export async function login(req, res) {
 
     // Require at least email or phone
     if (!email && !phone) {
+      await logAudit({ action: "LOGIN", status: "FAILED", reason: "Email or phone missing", failure_code: "LOGIN_000", req });
       return res.status(400).json({ message: "Email or Phone is required" });
     }
 
@@ -34,13 +35,25 @@ export async function login(req, res) {
       include: [{ model: AuthenticationType, as: "authType" }],
     });
 
-    if (!user) return res.status(404).json({ message: "User not found" });
-    if (!user.isActive) return res.status(403).json({ message: "User inactive" });
+    if (!user)
+      {
+             await logAudit({ email, phone, action: "LOGIN", status: "FAILED", reason: "User not found", failure_code: "LOGIN_001", req });
+
+        return res.status(404).json({ message: "User not found" });
+  }
+    if (!user.isActive)
+      { 
+             await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "User inactive", failure_code: "LOGIN_002", req });
+
+        return res.status(403).json({ message: "User inactive" });
+  }
 
     // INTERNAL FLOW
     if (user.userType === "INTERNAL") {
       // If password not provided -> inform UI to show password box
       if (!password) {
+               await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal user identified, password required", req });
+
         return res.status(200).json({
           loginType: "INTERNAL",
           nextStep: "PASSWORD_REQUIRED",
@@ -52,12 +65,15 @@ export async function login(req, res) {
       try {
         // await authenticateWithAD(user.email, password);
       } catch (err) {
+               await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Invalid AD password", failure_code: "AD_001", req });
+
         return res.status(401).json({ message: "Invalid Active Directory credentials" });
       }
 
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
+     await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal login successful (AD)", req });
 
       return res.status(200).json({
         loginType: "INTERNAL",
@@ -71,15 +87,20 @@ export async function login(req, res) {
     // EXTERNAL FLOW
     if (user.userType === "EXTERNAL") {
       // Never send OTP here. Only tell UI what to do next.
+           await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "External user identified, OTP required", req });
+
       return res.status(200).json({
         loginType: "EXTERNAL",
         nextStep: "OTP_SEND_REQUIRED",
         message: "External user detected. Please request OTP.",
       });
     }
+   await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Unknown userType", failure_code: "LOGIN_003", req });
 
     return res.status(400).json({ message: "Invalid login flow" });
   } catch (error) {
+       await logAudit({ action: "LOGIN", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -94,6 +115,8 @@ export async function sendOtp(req, res) {
     const { email, phone } = req.body || {};
 
     if (!email && !phone) {
+           await logAudit({ action: "SEND_OTP", status: "FAILED", reason: "Email or phone missing", failure_code: "OTP_000", req });
+
       return res.status(400).json({ message: "Email or Phone is required" });
     }
 
@@ -104,9 +127,13 @@ export async function sendOtp(req, res) {
       }
 
       const user = await findActiveUser({ email });
-      if (!user) return res.status(404).json({ message: "User not found" });
+      if (!user)
+   {          await logAudit({ email, phone, action: "SEND_OTP", status: "FAILED", reason: "User not found", failure_code: "OTP_001", req });
+ return res.status(404).json({ message: "User not found" });}
 
       if (user.userType !== "EXTERNAL") {
+             await logAudit({ user, action: "SEND_OTP", status: "FAILED", reason: "Internal users cannot request OTP", failure_code: "OTP_002", req });
+
         return res.status(400).json({ message: "Internal users do not use OTP" });
       }
       if (!isAuthType(user, "email")) {
@@ -117,39 +144,20 @@ export async function sendOtp(req, res) {
       try {
         await sendOtpEmail(user.email, otpCode);
       } catch (e) {
+
         console.log("Email send failed:", e.message);
       }
-
-      return res.status(200).json({
-        message: "OTP sent",
-       otp:otpCode
-      });
-    }
-
-    if (phone) {
-      if (!/^\d{10}$/.test(phone)) {
-        return res.status(400).json({ message: "Invalid phone number" });
-      }
-
-      const user = await findActiveUser({ phone });
-      if (!user) return res.status(404).json({ message: "User not found" });
-
-      if (user.userType !== "EXTERNAL") {
-        return res.status(400).json({ message: "Internal users do not use OTP" });
-      }
-      if (!isAuthType(user, "phone")) {
-        return res.status(400).json({ message: "User not configured for Phone OTP" });
-      }
-
-      const { otpCode } = await createPhoneOtpForUser(user);
-      // TODO: integrate SMS gateway send here
+   await logAudit({ user, action: "SEND_OTP", status: "SUCCESS", reason: "OTP sent successfully", req });
 
       return res.status(200).json({
         message: "OTP sent",
         ...(RETURN_OTP_IN_RESPONSE ? { otp: otpCode } : {}),
       });
     }
+
   } catch (error) {
+               await logAudit({ action: "SEND_OTP", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+
     console.error("Send OTP Error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -162,7 +170,10 @@ export async function sendOtp(req, res) {
 export async function verifyOtp(req, res) {
   try {
     const { email, phone, otp } = req.body || {};
-    if (!otp) return res.status(400).json({ message: "OTP is required" });
+    if (!otp) {
+           await logAudit({ action: "VERIFY_OTP", status: "FAILED", reason: "OTP missing", failure_code: "VERIFY_001", req });
+
+           return res.status(400).json({ message: "OTP is required" });}
 
     let user = null;
     let otpType = null;
@@ -177,8 +188,13 @@ export async function verifyOtp(req, res) {
       return res.status(400).json({ message: "Email or Phone is required" });
     }
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+           await logAudit({ email, phone, action: "VERIFY_OTP", status: "FAILED", reason: "User not found", failure_code: "VERIFY_002", req });
+
+           return res.status(404).json({ message: "User not found" });}
     if (user.userType !== "EXTERNAL") {
+           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Internal users do not use OTP", failure_code: "VERIFY_003", req });
+
       return res.status(400).json({ message: "Internal users do not use OTP" });
     }
 
@@ -188,7 +204,10 @@ export async function verifyOtp(req, res) {
       order: [["createdAt", "DESC"]], // ensure your model uses camelCase
     });
 
-    if (!otpRecord) return res.status(400).json({ message: "No active OTP found" });
+    if (!otpRecord) {
+           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "No OTP found", failure_code: "VERIFY_004", req });
+
+           return res.status(400).json({ message: "No active OTP found" });}
 
     // Expiry check
     if (new Date() > otpRecord.expiresAt) {
@@ -204,6 +223,8 @@ export async function verifyOtp(req, res) {
         otpRecord.isUsed = true; // lock this OTP
         await otpRecord.save();
       }
+           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
+
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
@@ -214,6 +235,7 @@ export async function verifyOtp(req, res) {
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
+   await logAudit({ user, action: "VERIFY_OTP", status: "SUCCESS", reason: "OTP verified successfully", req });
 
     return res.status(200).json({
       message: "OTP verified successfully",
@@ -234,12 +256,18 @@ export async function logout(req, res) {
   try {
     const { refreshToken } = req.body || {};
     if (!refreshToken) {
+           await logAudit({ action: "LOGOUT", status: "FAILED", reason: "Refresh token missing", failure_code: "LOGOUT_001", req });
+
       return res.status(400).json({ message: "Refresh token is required" });
     }
     await invalidateRefreshToken(refreshToken);
+       await logAudit({ action: "LOGOUT", status: "SUCCESS", reason: "Logout successful", req });
+
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout Error:", error);
+       await logAudit({ action: "LOGOUT", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+
     return res.status(500).json({ message: "Internal server error" });
   }
 }
