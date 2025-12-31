@@ -200,10 +200,13 @@ export async function verifyOtp(req, res) {
 
     // Get latest non-used OTP
     const otpRecord = await Otp.findOne({
-      where: { userId: user.id, otpType, isUsed: false },
-      order: [["createdAt", "DESC"]], // ensure your model uses camelCase
-    });
-
+     where: {
+       userId: user.id,
+       otpType,
+       isUsed: false,
+     },
+     order: [["createdAt", "DESC"]],
+   });
     if (!otpRecord) {
            await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "No OTP found", failure_code: "VERIFY_004", req });
 
@@ -215,30 +218,30 @@ export async function verifyOtp(req, res) {
     }
 
     // Match check
-   let otpWarningMessage = '';
-if (otpRecord.otpCode !== otp) {
-  // Track attempts to throttle brute force
-  otpRecord.attempts = (otpRecord.attempts || 0) + 1;
-  await otpRecord.save();
-
-  if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
-    // Warning before locking
+  let otpWarningMessage = "";
+   // ----------------------------------------------
+   if (otpRecord.otpCode !== otp) {
+     otpRecord.attempts += 1;
+     await otpRecord.save();
+     console.log("Updated attempts:", otpRecord.attempts);
+     // 4th attempt
+     if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
     otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
   }
-
-  if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
-    // Lock the OTP and inform the user
-    otpRecord.isUsed = true; // Lock this OTP
-    await otpRecord.save();
+//5th attempt
+   if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
+       otpRecord.isUsed = true;
+       await otpRecord.save();
     otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
   }
 
   await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
 
   return res.status(400).json({
-    message: "Invalid OTP",
-    otpWarningMessage: otpWarningMessage, // Ensure this is passed properly
-  });
+       message: "Invalid OTP",
+       warning: otpWarningMessage,
+       attempts: otpRecord.attempts,
+     });
 }
 
     // Issue tokens

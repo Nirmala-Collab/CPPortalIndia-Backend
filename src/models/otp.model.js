@@ -27,6 +27,11 @@ Otp.init(
      allowNull: false,
      field: "otp_type",
    },
+   attempts:{
+    type:DataTypes.INTEGER,
+    defaultValue:0,
+    field:"otp_attempts"
+   },
    expiresAt: {
      type: DataTypes.DATE,
      allowNull: false,
