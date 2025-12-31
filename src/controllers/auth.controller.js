@@ -215,22 +215,30 @@ export async function verifyOtp(req, res) {
     }
 
     // Match check
-    if (otpRecord.otpCode !== otp) {
-      // Optional: track attempts to throttle brute force
-      otpRecord.attempts = (otpRecord.attempts || 0) + 1;
-      await otpRecord.save();
-      if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
-        otpRecord.isUsed = true; // lock this OTP
-        await otpRecord.save();
-      }
+   let otpWarningMessage = '';
+if (otpRecord.otpCode !== otp) {
+  // Track attempts to throttle brute force
+  otpRecord.attempts = (otpRecord.attempts || 0) + 1;
+  await otpRecord.save();
+
+  if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
+    // Warning before locking
+    otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
+  }
+
+  if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
+    // Lock the OTP and inform the user
+    otpRecord.isUsed = true; // Lock this OTP
+    await otpRecord.save();
+    otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
+  }
+
            await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
 
-      return res.status(400).json({ message: "Invalid OTP" });
+      return res.status(400).json({ message: "Invalid OTP" , otpWarningMessage,
+});
     }
 
-    // Mark as used
-    otpRecord.isUsed = true;
-    await otpRecord.save();
 
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });

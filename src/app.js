@@ -8,6 +8,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from './routes/user.routes.js'
 import roleRoutes from './routes/role.routes.js'
 dotenv.config();
+
+const app = express();
 app.use(cors({
   origin:'http://localhost:5173',
   methods:['GET','POST','PUT','PATCH','DELETE'],
@@ -15,7 +17,6 @@ app.use(cors({
   credentials:true
 }
 ));
-const app = express();
 app.use(express.json());
 app.get("/health", (req, res) => {
  res.json({ status: "OK" });
