@@ -233,12 +233,13 @@ if (otpRecord.otpCode !== otp) {
     otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
   }
 
-           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
+  await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
 
-      return res.status(400).json({ message: "Invalid OTP" , otpWarningMessage,
-});
-    }
-
+  return res.status(400).json({
+    message: "Invalid OTP",
+    otpWarningMessage: otpWarningMessage, // Ensure this is passed properly
+  });
+}
 
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
