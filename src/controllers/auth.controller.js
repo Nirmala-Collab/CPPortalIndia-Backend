@@ -5,7 +5,7 @@ import { generateJwtToken } from "../services/jwt.service.js";
 import { createRefreshToken, invalidateRefreshToken } from "../services/refreshToken.service.js";
 import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.service.js";
 import { sendOtpEmail } from "../services/email.service.js";
-// import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
+import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
 const { User, Otp, AuthenticationType } = db;
 
@@ -63,7 +63,7 @@ export async function login(req, res) {
 
       // If password provided -> AD authenticate
       try {
-        // await authenticateWithAD(user.email, password);
+        await authenticateWithAD(user.email, password);
       } catch (err) {
                await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Invalid AD password", failure_code: "AD_001", req });
 
@@ -218,7 +218,7 @@ export async function verifyOtp(req, res) {
     }
 
     // Match check
-  let otpWarningMessage = "";
+  let otpWarningMessage = "Invalid OTP";
    // ----------------------------------------------
    if (otpRecord.otpCode !== otp) {
      otpRecord.attempts += 1;
@@ -238,8 +238,7 @@ export async function verifyOtp(req, res) {
   await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
 
   return res.status(400).json({
-       message: "Invalid OTP",
-       warning: otpWarningMessage,
+       message:otpWarningMessage,
        attempts: otpRecord.attempts,
      });
 }
