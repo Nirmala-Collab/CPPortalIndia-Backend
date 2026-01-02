@@ -139,6 +139,27 @@ export async function sendOtp(req, res) {
       if (!isAuthType(user, "email")) {
         return res.status(400).json({ message: "User not configured for Email OTP" });
       }
+      const latestLock = await Otp.findOne({
+        where:{userId:user.id,otpType:"EMAIL",locked:true},
+        order:[["createdAt","DESC"]]
+      });
+
+      if(latestLock)
+      {
+        await logAudit({
+          user,
+          action:"SEND_OTP",
+          status:"FAILED",
+          reason:"Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
+          failure_code:"OTP_LOCKED",
+          req
+        })
+      }
+      
+      return res.status(423).json({
+        message:"Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
+        locked:latestLock.locked
+      })
 
       const { otpCode } = await createEmailOtpForUser(user);
       try {
@@ -229,6 +250,7 @@ export async function verifyOtp(req, res) {
     otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
   }
 //5th attempt
+
    if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
        otpRecord.isUsed = true;
        await otpRecord.save();

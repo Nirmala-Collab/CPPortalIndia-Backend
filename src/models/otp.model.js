@@ -1,6 +1,7 @@
 // src/models/otp.model.js
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/db.js";
+import { defaultValueSchemable } from "sequelize/lib/utils";
 class Otp extends Model {}
 Otp.init(
  {
@@ -32,6 +33,14 @@ Otp.init(
     defaultValue:0,
     field:"otp_attempts"
    },
+   locked:
+   {
+    type:DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue:false,
+    field:"account_lock"
+   },
+
    expiresAt: {
      type: DataTypes.DATE,
      allowNull: false,
