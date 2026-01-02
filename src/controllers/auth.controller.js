@@ -35,24 +35,22 @@ export async function login(req, res) {
       include: [{ model: AuthenticationType, as: "authType" }],
     });
 
-    if (!user)
-      {
-             await logAudit({ email, phone, action: "LOGIN", status: "FAILED", reason: "User not found", failure_code: "LOGIN_001", req });
+    if (!user) {
+      await logAudit({ email, phone, action: "LOGIN", status: "FAILED", reason: "User not found", failure_code: "LOGIN_001", req });
 
-        return res.status(404).json({ message: "User not found" });
-  }
-    if (!user.isActive)
-      { 
-             await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "User inactive", failure_code: "LOGIN_002", req });
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.isActive) {
+      await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "User inactive", failure_code: "LOGIN_002", req });
 
-        return res.status(403).json({ message: "User inactive" });
-  }
+      return res.status(403).json({ message: "User inactive" });
+    }
 
     // INTERNAL FLOW
     if (user.userType === "INTERNAL") {
       // If password not provided -> inform UI to show password box
       if (!password) {
-               await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal user identified, password required", req });
+        await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal user identified, password required", req });
 
         return res.status(200).json({
           loginType: "INTERNAL",
@@ -65,7 +63,7 @@ export async function login(req, res) {
       try {
         await authenticateWithAD(user.email, password);
       } catch (err) {
-               await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Invalid AD password", failure_code: "AD_001", req });
+        await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Invalid AD password", failure_code: "AD_001", req });
 
         return res.status(401).json({ message: "Invalid Active Directory credentials" });
       }
@@ -73,7 +71,7 @@ export async function login(req, res) {
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
-     await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal login successful (AD)", req });
+      await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal login successful (AD)", req });
 
       return res.status(200).json({
         loginType: "INTERNAL",
@@ -87,7 +85,7 @@ export async function login(req, res) {
     // EXTERNAL FLOW
     if (user.userType === "EXTERNAL") {
       // Never send OTP here. Only tell UI what to do next.
-           await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "External user identified, OTP required", req });
+      await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "External user identified, OTP required", req });
 
       return res.status(200).json({
         loginType: "EXTERNAL",
@@ -95,11 +93,11 @@ export async function login(req, res) {
         message: "External user detected. Please request OTP.",
       });
     }
-   await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Unknown userType", failure_code: "LOGIN_003", req });
+    await logAudit({ user, action: "LOGIN", status: "FAILED", reason: "Unknown userType", failure_code: "LOGIN_003", req });
 
     return res.status(400).json({ message: "Invalid login flow" });
   } catch (error) {
-       await logAudit({ action: "LOGIN", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+    await logAudit({ action: "LOGIN", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
 
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -115,7 +113,7 @@ export async function sendOtp(req, res) {
     const { email, phone } = req.body || {};
 
     if (!email && !phone) {
-           await logAudit({ action: "SEND_OTP", status: "FAILED", reason: "Email or phone missing", failure_code: "OTP_000", req });
+      await logAudit({ action: "SEND_OTP", status: "FAILED", reason: "Email or phone missing", failure_code: "OTP_000", req });
 
       return res.status(400).json({ message: "Email or Phone is required" });
     }
@@ -127,12 +125,13 @@ export async function sendOtp(req, res) {
       }
 
       const user = await findActiveUser({ email });
-      if (!user)
-   {          await logAudit({ email, phone, action: "SEND_OTP", status: "FAILED", reason: "User not found", failure_code: "OTP_001", req });
- return res.status(404).json({ message: "User not found" });}
+      if (!user) {
+        await logAudit({ email, phone, action: "SEND_OTP", status: "FAILED", reason: "User not found", failure_code: "OTP_001", req });
+        return res.status(404).json({ message: "User not found" });
+      }
 
       if (user.userType !== "EXTERNAL") {
-             await logAudit({ user, action: "SEND_OTP", status: "FAILED", reason: "Internal users cannot request OTP", failure_code: "OTP_002", req });
+        await logAudit({ user, action: "SEND_OTP", status: "FAILED", reason: "Internal users cannot request OTP", failure_code: "OTP_002", req });
 
         return res.status(400).json({ message: "Internal users do not use OTP" });
       }
@@ -140,26 +139,26 @@ export async function sendOtp(req, res) {
         return res.status(400).json({ message: "User not configured for Email OTP" });
       }
       const latestLock = await Otp.findOne({
-        where:{userId:user.id,otpType:"EMAIL",locked:true},
-        order:[["createdAt","DESC"]]
+        where: { userId: user.id, otpType: "EMAIL", locked: true },
+        order: [["createdAt", "DESC"]]
       });
-
-      if(latestLock)
-      {
+      console.error("locked", latestLock)
+      if (latestLock) {
         await logAudit({
           user,
-          action:"SEND_OTP",
-          status:"FAILED",
-          reason:"Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
-          failure_code:"OTP_LOCKED",
+          action: "SEND_OTP",
+          status: "FAILED",
+          reason: "Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
+          failure_code: "OTP_LOCKED",
           req
         })
+
+
+        return res.status(423).json({
+          message: "Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
+          locked: latestLock.locked
+        })
       }
-      
-      return res.status(423).json({
-        message:"Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
-        locked:latestLock.locked
-      })
 
       const { otpCode } = await createEmailOtpForUser(user);
       try {
@@ -168,16 +167,17 @@ export async function sendOtp(req, res) {
 
         console.log("Email send failed:", e.message);
       }
-   await logAudit({ user, action: "SEND_OTP", status: "SUCCESS", reason: "OTP sent successfully", req });
+      await logAudit({ user, action: "SEND_OTP", status: "SUCCESS", reason: "OTP sent successfully", req });
 
       return res.status(200).json({
         message: "OTP sent",
         ...(RETURN_OTP_IN_RESPONSE ? { otp: otpCode } : {}),
       });
     }
+  }
 
-  } catch (error) {
-               await logAudit({ action: "SEND_OTP", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+  catch (error) {
+    await logAudit({ action: "SEND_OTP", status: "FAILED", reason: error.message, failure_code: "SERVER_500", req });
 
     console.error("Send OTP Error:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -192,9 +192,10 @@ export async function verifyOtp(req, res) {
   try {
     const { email, phone, otp } = req.body || {};
     if (!otp) {
-           await logAudit({ action: "VERIFY_OTP", status: "FAILED", reason: "OTP missing", failure_code: "VERIFY_001", req });
+      await logAudit({ action: "VERIFY_OTP", status: "FAILED", reason: "OTP missing", failure_code: "VERIFY_001", req });
 
-           return res.status(400).json({ message: "OTP is required" });}
+      return res.status(400).json({ message: "OTP is required" });
+    }
 
     let user = null;
     let otpType = null;
@@ -210,28 +211,30 @@ export async function verifyOtp(req, res) {
     }
 
     if (!user) {
-           await logAudit({ email, phone, action: "VERIFY_OTP", status: "FAILED", reason: "User not found", failure_code: "VERIFY_002", req });
+      await logAudit({ email, phone, action: "VERIFY_OTP", status: "FAILED", reason: "User not found", failure_code: "VERIFY_002", req });
 
-           return res.status(404).json({ message: "User not found" });}
+      return res.status(404).json({ message: "User not found" });
+    }
     if (user.userType !== "EXTERNAL") {
-           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Internal users do not use OTP", failure_code: "VERIFY_003", req });
+      await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Internal users do not use OTP", failure_code: "VERIFY_003", req });
 
       return res.status(400).json({ message: "Internal users do not use OTP" });
     }
 
     // Get latest non-used OTP
     const otpRecord = await Otp.findOne({
-     where: {
-       userId: user.id,
-       otpType,
-       isUsed: false,
-     },
-     order: [["createdAt", "DESC"]],
-   });
+      where: {
+        userId: user.id,
+        otpType,
+        isUsed: false,
+      },
+      order: [["createdAt", "DESC"]],
+    });
     if (!otpRecord) {
-           await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "No OTP found", failure_code: "VERIFY_004", req });
+      await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "No OTP found", failure_code: "VERIFY_004", req });
 
-           return res.status(400).json({ message: "No active OTP found" });}
+      return res.status(400).json({ message: "No active OTP found" });
+    }
 
     // Expiry check
     if (new Date() > otpRecord.expiresAt) {
@@ -239,36 +242,36 @@ export async function verifyOtp(req, res) {
     }
 
     // Match check
-  let otpWarningMessage = "Invalid OTP";
-   // ----------------------------------------------
-   if (otpRecord.otpCode !== otp) {
-     otpRecord.attempts += 1;
-     await otpRecord.save();
-     console.log("Updated attempts:", otpRecord.attempts);
-     // 4th attempt
-     if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
-    otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
-  }
-//5th attempt
+    let otpWarningMessage = "Invalid OTP";
+    // ----------------------------------------------
+    if (otpRecord.otpCode !== otp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+      console.log("Updated attempts:", otpRecord.attempts);
+      // 4th attempt
+      if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
+        otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
+      }
+      //5th attempt
 
-   if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
-       otpRecord.isUsed = true;
-       await otpRecord.save();
-    otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
-  }
+      if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
+        otpRecord.isUsed = true;
+        await otpRecord.save();
+        otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
+      }
 
-  await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
+      await logAudit({ user, action: "VERIFY_OTP", status: "FAILED", reason: "Invalid OTP", failure_code: "VERIFY_005", req });
 
-  return res.status(400).json({
-       message:otpWarningMessage,
-       attempts: otpRecord.attempts,
-     });
-}
+      return res.status(400).json({
+        message: otpWarningMessage,
+        attempts: otpRecord.attempts,
+      });
+    }
 
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
-   await logAudit({ user, action: "VERIFY_OTP", status: "SUCCESS", reason: "OTP verified successfully", req });
+    await logAudit({ user, action: "VERIFY_OTP", status: "SUCCESS", reason: "OTP verified successfully", req });
 
     return res.status(200).json({
       message: "OTP verified successfully",
@@ -289,17 +292,17 @@ export async function logout(req, res) {
   try {
     const { refreshToken } = req.body || {};
     if (!refreshToken) {
-           await logAudit({ action: "LOGOUT", status: "FAILED", reason: "Refresh token missing", failure_code: "LOGOUT_001", req });
+      await logAudit({ action: "LOGOUT", status: "FAILED", reason: "Refresh token missing", failure_code: "LOGOUT_001", req });
 
       return res.status(400).json({ message: "Refresh token is required" });
     }
     await invalidateRefreshToken(refreshToken);
-       await logAudit({ action: "LOGOUT", status: "SUCCESS", reason: "Logout successful", req });
+    await logAudit({ action: "LOGOUT", status: "SUCCESS", reason: "Logout successful", req });
 
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout Error:", error);
-       await logAudit({ action: "LOGOUT", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
+    await logAudit({ action: "LOGOUT", status: "FAILED", reason: err.message, failure_code: "SERVER_500", req });
 
     return res.status(500).json({ message: "Internal server error" });
   }
