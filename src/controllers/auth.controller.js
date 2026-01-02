@@ -7,7 +7,7 @@ import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.se
 import { sendOtpEmail } from "../services/email.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
-const { User, Otp, AuthenticationType } = db;
+const { User, Otp, AuthenticationType, Role } = db;
 
 // --- Config toggles ---
 const RETURN_OTP_IN_RESPONSE = true; // true only for local dev
@@ -32,8 +32,16 @@ export async function login(req, res) {
     const whereClause = email ? { email } : { phone };
     const user = await User.findOne({
       where: whereClause,
-      include: [{ model: AuthenticationType, as: "authType" }],
+      include: [
+        { model: AuthenticationType, as: "authType" },
+        {
+          model: Role,
+          as: "role",
+          attributes: ["id", "roleName"] // use model attribute, not DB column
+        }
+      ],
     });
+
 
     if (!user) {
       await logAudit({ email, phone, action: "LOGIN", status: "FAILED", reason: "User not found", failure_code: "LOGIN_001", req });
@@ -142,7 +150,6 @@ export async function sendOtp(req, res) {
         where: { userId: user.id, otpType: "EMAIL", locked: true },
         order: [["createdAt", "DESC"]]
       });
-      console.error("locked", latestLock)
       if (latestLock) {
         await logAudit({
           user,
@@ -152,7 +159,6 @@ export async function sendOtp(req, res) {
           failure_code: "OTP_LOCKED",
           req
         })
-
 
         return res.status(423).json({
           message: "Account locked due to too many failed OTP attempts. Please contact RM or try after an hour",
@@ -247,7 +253,6 @@ export async function verifyOtp(req, res) {
     if (otpRecord.otpCode !== otp) {
       otpRecord.attempts += 1;
       await otpRecord.save();
-      console.log("Updated attempts:", otpRecord.attempts);
       // 4th attempt
       if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
         otpWarningMessage = 'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
@@ -256,6 +261,8 @@ export async function verifyOtp(req, res) {
 
       if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
         otpRecord.isUsed = true;
+        otpRecord.locked = true;
+        otpRecord.lockedUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
         await otpRecord.save();
         otpWarningMessage = 'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
       }
@@ -316,13 +323,19 @@ function publicUser(user) {
     phone: user.phone,
     firstName: user.firstName,
     lastName: user.lastName,
+    role: user.role?.roleName || null
+
   };
 }
 
 async function findActiveUser(where) {
   const user = await User.findOne({
     where,
-    include: [{ model: AuthenticationType, as: "authType" }],
+    include: [{ model: AuthenticationType, as: "authType" },
+    { model: Role, as: "role", attributes: ["id", "roleName"] }
+
+    ]
+
   });
   if (!user) return null;
   if (!user.isActive) return null;
