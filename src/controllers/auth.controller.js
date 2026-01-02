@@ -33,12 +33,7 @@ export async function login(req, res) {
     const user = await User.findOne({
       where: whereClause,
       include: [
-        { model: AuthenticationType, as: "authType" },
-        {
-          model: Role,
-          as: "role",
-          attributes: ["id", "roleType", "roleName"] // use model attribute, not DB column
-        }
+        { model: AuthenticationType, as: "authType" }
       ],
     });
 
@@ -323,30 +318,26 @@ function publicUser(user) {
     phone: user.phone,
     firstName: user.firstName,
     lastName: user.lastName,
-    role: user.role
-      ? {
-        id: user.role.id,
-        type: user.role.roleType,
-        name: user.role.roleName
-      }
-      : null
-
-  };
+    roleId: user.roleId,
+    isActive: user.isActive // just the role_id
+  }
 }
 
 async function findActiveUser(where) {
   const user = await User.findOne({
     where,
-    include: [{ model: AuthenticationType, as: "authType" },
-    { model: Role, as: "role", attributes: ["id", "roleType", "roleName"] }
-
+    include: [
+      { model: AuthenticationType, as: "authType" },
     ]
-
   });
+
   if (!user) return null;
   if (!user.isActive) return null;
+
   return user;
 }
+
+
 
 function isAuthType(user, typeName) {
   return user?.authType?.name?.toLowerCase() === typeName.toLowerCase();

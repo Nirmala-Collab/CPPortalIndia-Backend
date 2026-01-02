@@ -1,6 +1,7 @@
 import sequelize from "../config/db.js";
-import AuditLog from "./auditLog.model.js";
+
 // MODELS
+import AuditLog from './auditLog.model.js';
 
 import User from "./user.model.js";
 
@@ -187,9 +188,10 @@ const db = {
   AccessRight,
 
   UserAccessRight,
+
   AuditLog,
 
 };
 
 export default db;
- 
+await sequelize.sync();
