@@ -37,7 +37,7 @@ export async function login(req, res) {
         {
           model: Role,
           as: "role",
-          attributes: ["id", "roleName"] // use model attribute, not DB column
+          attributes: ["id", "roleType", "roleName"] // use model attribute, not DB column
         }
       ],
     });
@@ -323,7 +323,13 @@ function publicUser(user) {
     phone: user.phone,
     firstName: user.firstName,
     lastName: user.lastName,
-    role: user.role?.roleName || null
+    role: user.role
+      ? {
+        id: user.role.id,
+        type: user.role.roleType,
+        name: user.role.roleName
+      }
+      : null
 
   };
 }
@@ -332,7 +338,7 @@ async function findActiveUser(where) {
   const user = await User.findOne({
     where,
     include: [{ model: AuthenticationType, as: "authType" },
-    { model: Role, as: "role", attributes: ["id", "roleName"] }
+    { model: Role, as: "role", attributes: ["id", "roleType", "roleName"] }
 
     ]
 
