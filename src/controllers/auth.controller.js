@@ -7,6 +7,7 @@ import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.se
 import { sendOtpEmail } from "../services/email.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
+import { where } from "sequelize";
 const { User, Otp, AuthenticationType, Role } = db;
 
 // --- Config toggles ---
@@ -33,10 +34,14 @@ export async function login(req, res) {
     const user = await User.findOne({
       where: whereClause,
       include: [
-        { model: AuthenticationType, as: "authType" }
+        { model: AuthenticationType, as: "authType" },
+        {
+          model: Role,
+          as: "role",
+          attributes: ["id", "roleName", "roleType"],
+        },
       ],
     });
-
 
     if (!user) {
       await logAudit({ email, phone, action: "LOGIN", status: "FAILED", reason: "User not found", failure_code: "LOGIN_001", req });
@@ -202,7 +207,16 @@ export async function verifyOtp(req, res) {
     let otpType = null;
 
     if (email) {
-      user = await User.findOne({ where: { email } });
+      user = await User.findOne({
+        where: { email },
+        include: [
+          {
+            model: Role,
+            as: "role",
+            attributes: ["id", "roleName", "roleType"],
+          },
+        ],
+      })
       otpType = "EMAIL";
     } else if (phone) {
       user = await User.findOne({ where: { phone } });
@@ -274,7 +288,8 @@ export async function verifyOtp(req, res) {
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
     await logAudit({ user, action: "VERIFY_OTP", status: "SUCCESS", reason: "OTP verified successfully", req });
-
+    const u = publicUser(user)
+    console.log('u', u)
     return res.status(200).json({
       message: "OTP verified successfully",
       token: jwtToken,
@@ -310,7 +325,6 @@ export async function logout(req, res) {
   }
 }
 
-// ---------------- Helpers ----------------
 function publicUser(user) {
   return {
     id: user.id,
@@ -318,25 +332,32 @@ function publicUser(user) {
     phone: user.phone,
     firstName: user.firstName,
     lastName: user.lastName,
-    roleId: user.roleId,
-    isActive: user.isActive // just the role_id
-  }
+    role: user.role
+      ? {
+        id: user.role.id,
+        name: user.role.roleName,
+        type: user.role.roleType,
+      }
+      : null,
+    isActive: user.isActive,
+  };
 }
-
 async function findActiveUser(where) {
   const user = await User.findOne({
     where,
     include: [
       { model: AuthenticationType, as: "authType" },
+      {
+        model: Role,
+        as: "role",
+        attributes: ["id", "roleName", "roleType"],
+      },
     ]
   });
-
   if (!user) return null;
   if (!user.isActive) return null;
-
   return user;
 }
-
 
 
 function isAuthType(user, typeName) {
