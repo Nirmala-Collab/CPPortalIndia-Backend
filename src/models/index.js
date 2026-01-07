@@ -1,6 +1,7 @@
 import sequelize from "../config/db.js";
 
 // MODELS
+import RoleAccessRight from "./roleAccessRight.model.js";
 import AuditLog from './auditLog.model.js';
 
 import User from "./user.model.js";
@@ -103,7 +104,7 @@ User.belongsTo(Role, {
 
 Corporate.hasMany(User, {
 
-  foreignKey: "corporate_id",
+  foreignKey: "client_group_id",
 
   as: "users",
 
@@ -111,17 +112,17 @@ Corporate.hasMany(User, {
 
 User.belongsTo(Corporate, {
 
-  foreignKey: "corporate_id",
+  foreignKey: "client_group_id",
 
   as: "corporate",
 
 });
 
-/* 6. USER ↔ COMPANY (Many-to-One)  ✅ NEW */
+// /* 6. USER ↔ COMPANY (Many-to-One)  ✅ NEW */
 
 Company.hasMany(User, {
 
-  foreignKey: "company_id",
+  foreignKey: "client_id",
 
   as: "users",
 
@@ -129,13 +130,13 @@ Company.hasMany(User, {
 
 User.belongsTo(Company, {
 
-  foreignKey: "company_id",
+  foreignKey: "client_id",
 
   as: "company",
 
 });
 
-/* 7. USER ↔ ACCESS RIGHTS (Many-to-Many) */
+// /* 7. USER ↔ ACCESS RIGHTS (Many-to-Many) */
 
 User.belongsToMany(AccessRight, {
 
@@ -161,6 +162,33 @@ AccessRight.belongsToMany(User, {
 
 });
 
+
+/* Corporate to Company */
+
+Corporate.hasMany(Company, {
+  foreignKey: "client_group_id",
+  as: "companies"
+})
+
+Company.belongsTo(Corporate, {
+  foreignKey: "client_group_id",
+  as: "corporate"
+})
+
+
+
+Role.belongsToMany(AccessRight, {
+  through: RoleAccessRight,
+  foreignKey: "role_id",
+  otherKey: "access_right_id",
+  as: "accessRights",
+});
+AccessRight.belongsToMany(Role, {
+  through: RoleAccessRight,
+  foreignKey: "access_right_id",
+  otherKey: "role_id",
+  as: "roles",
+});
 /* =====================================================
 
    EXPORT DB
@@ -188,7 +216,7 @@ const db = {
   AccessRight,
 
   UserAccessRight,
-
+  RoleAccessRight,
   AuditLog,
 
 };

@@ -4,7 +4,7 @@ const { AccessRight } = db;
 
 export async function getAccessRights(req, res) {
     try {
-        const acessRights = await AccessRight.findAll();
+        const accessRights = await AccessRight.findAll();
         return res.status(200).json({ accessRights });
     } catch (err) {
         console.error("Get Access Rights Error:", err);
