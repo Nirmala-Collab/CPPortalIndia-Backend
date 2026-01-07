@@ -32,7 +32,7 @@ const User = sequelize.define(
     clientId: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: "clien_id",
+      field: "client_id",
     },
     endDate: {
       type: DataTypes.DATE,
@@ -73,6 +73,11 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       field: 'deleted'
+    },
+    assignCorporteGroup: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: "assign_corporate_group"
     }
   },
   {

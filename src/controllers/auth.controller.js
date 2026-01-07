@@ -8,7 +8,7 @@ import { sendOtpEmail } from "../services/email.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
 import { where } from "sequelize";
-const { User, Otp, AuthenticationType, Role } = db;
+const { User, Otp, AuthenticationType, Role, AccessRight } = db;
 
 // --- Config toggles ---
 const RETURN_OTP_IN_RESPONSE = true; // true only for local dev
@@ -39,6 +39,11 @@ export async function login(req, res) {
           model: Role,
           as: "role",
           attributes: ["id", "roleName", "roleType"],
+        },
+        {
+          model: AccessRight,
+          as: "accessRights",
+          attributes: ["id", "rightName", "code"],
         },
       ],
     });
@@ -214,7 +219,12 @@ export async function verifyOtp(req, res) {
             model: Role,
             as: "role",
             attributes: ["id", "roleName", "roleType"],
+          }, {
+            model: AccessRight,
+            as: "accessRights",
+            attributes: ["id", "rightName", "code"],
           },
+
         ],
       })
       otpType = "EMAIL";
@@ -340,6 +350,7 @@ function publicUser(user) {
       }
       : null,
     isActive: user.isActive,
+    accessRights: user.accessRights?.map(r => r.rightName) || []
   };
 }
 async function findActiveUser(where) {
@@ -351,6 +362,11 @@ async function findActiveUser(where) {
         model: Role,
         as: "role",
         attributes: ["id", "roleName", "roleType"],
+      },
+      {
+        model: AccessRight,
+        as: "accessRights",
+        attributes: ["id", "rightName", "code"],
       },
     ]
   });

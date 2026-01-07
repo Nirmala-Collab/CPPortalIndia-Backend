@@ -18,6 +18,11 @@ const AccessRight = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    code:
+    {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   },
   {
     tableName: "access_rights",
@@ -27,4 +32,3 @@ const AccessRight = sequelize.define(
 );
 
 export default AccessRight;
- 
