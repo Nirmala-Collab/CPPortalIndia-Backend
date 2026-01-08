@@ -69,3 +69,23 @@
  
  "isActive": true
 }
+
+{
+ "fullName": "Mukul Bhatia",
+ "email": "mukul.bhatia@lockton.com",
+ "phone": "9114523800",
+ "clientGroupId": "12",
+ "clientId": "10",
+         "roleId": "5e94e753-16ad-48e0-a889-667ae637ba51",
+ "authTypeId": "0ec67c24-ef1d-43c6-9be3-1b369e99d1cd",
+ "relationshipManager": "",
+        "claimsManager": "",
+ "userType": "INTERNAL",
+ "assignCorporateGroup":"",
+  "endDate":"2026-09-31",
+ "accessRights": [
+   "15c5db8c-5562-45a9-9924-f6fa8b82d842"
+ ],
+ 
+ "isActive": true
+}
