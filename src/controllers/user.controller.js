@@ -1,4 +1,7 @@
 import db from "../models/index.js";
+import { Op } from "sequelize";
+import { fetchUserById } from "../services/user.service.js";
+
 import { maskEmail, maskPhone } from "../utils/mask.js";
 const {
   User,
@@ -264,22 +267,60 @@ export async function getUsers(req, res) {
 */
 export async function getUserById(req, res) {
   try {
-    const userId = req.params.id;
-    const user = await User.findByPk(userId, {
-      include: [
-        { model: Role, as: "role" },
-        { model: Corporate, as: "corporate" },
-        { model: Company, as: "company" },
-        { model: AuthenticationType, as: "authType" },
-        { model: AccessRight, as: "accessRights" },
-      ],
-    });
+    const { id } = req.params;
+    const user = await fetchUserById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     return res.status(200).json({ user });
   } catch (error) {
     console.error("Get User Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+export async function getUsersByRoles(req, res) {
+  try {
+    const { roles } = req.query;
+    if (!roles) {
+      return res.status(400).json({
+        message: "roles query param is required (e.g. roles=RM,CM)",
+      });
+    }
+    // RM,CM → ["RM", "CM"]
+    const roleList = roles
+      .split(",")
+      .map(r => r.trim().toUpperCase());
+    const users = await User.findAll({
+      attributes: ["fullName"],
+      include: [
+        {
+          model: Role,
+          as: "role",
+          required: true,
+          where: {
+            roleName: {
+              [Op.in]: roleList,
+            },
+          },
+          attributes: ["roleName"],
+        },
+      ],
+    });
+    // ✅ Initialize response structure
+    const grouped = {};
+    roleList.forEach(role => {
+      grouped[role] = [];
+    });
+    // ✅ Group names by role
+    users.forEach(user => {
+      const roleName = user.role.roleName;
+      grouped[roleName].push(user.fullName);
+    });
+    return res.status(200).json(grouped);
+  } catch (error) {
+    console.error("Get Users By Roles Error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 }

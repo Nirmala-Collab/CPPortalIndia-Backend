@@ -8,6 +8,8 @@ import { sendOtpEmail } from "../services/email.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
 import { where } from "sequelize";
+import { fetchUserById } from "../services/user.service.js";
+
 const { User, Otp, AuthenticationType, Role, AccessRight } = db;
 
 // --- Config toggles ---
@@ -85,13 +87,14 @@ export async function login(req, res) {
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
       await logAudit({ user, action: "LOGIN", status: "SUCCESS", reason: "Internal login successful (AD)", req });
-
+      const userData = await fetchUserById(user.id)
+      console.log(userData)
       return res.status(200).json({
         loginType: "INTERNAL",
         message: "Login successful",
         token: jwtToken,
         refreshToken: refreshTokenObj.token,
-        user: publicUser(user),
+        user: userData,
       });
     }
 
@@ -297,14 +300,13 @@ export async function verifyOtp(req, res) {
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
+    const userData = await fetchUserById(user.id);
     await logAudit({ user, action: "VERIFY_OTP", status: "SUCCESS", reason: "OTP verified successfully", req });
-    const u = publicUser(user)
-    console.log('u', u)
     return res.status(200).json({
       message: "OTP verified successfully",
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
-      user: publicUser(user),
+      user: userData,
     });
   } catch (error) {
     console.error("Verify OTP Error:", error);
@@ -337,20 +339,7 @@ export async function logout(req, res) {
 
 function publicUser(user) {
   return {
-    id: user.id,
-    email: user.email,
-    phone: user.phone,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    role: user.role
-      ? {
-        id: user.role.id,
-        name: user.role.roleName,
-        type: user.role.roleType,
-      }
-      : null,
-    isActive: user.isActive,
-    accessRights: user.accessRights?.map(r => r.rightName) || []
+    user: user
   };
 }
 async function findActiveUser(where) {

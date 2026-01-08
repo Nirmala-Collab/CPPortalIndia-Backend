@@ -10,6 +10,7 @@ import roleRoutes from './routes/role.routes.js'
 import authTypeRoutes from './routes/authenticationType.routes.js'
 import accessRightsRoutes from './routes/accessRights.routes.js'
 import masterDataRoutes from './routes/masterData.routes.js'
+import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js'
 dotenv.config();
 
 const app = express();
@@ -43,4 +44,5 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/authType", authTypeRoutes);
 app.use("/api/accessRights", accessRightsRoutes)
 app.use('/api/masterDataSync', masterDataRoutes);
+app.use('/api/roleAccessRights', roleAccessRightsRoutes)
 export default app;

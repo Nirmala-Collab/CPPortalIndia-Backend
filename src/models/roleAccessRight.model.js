@@ -1,21 +1,28 @@
-// src/models/roleAccessRight.model.js
-import { DataTypes, Model } from "sequelize";
+import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
-class RoleAccessRight extends Model { }
-RoleAccessRight.init(
+const RoleAccessRight = sequelize.define(
+    "RoleAccessRight",
     {
-        isEnabled: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true,
-            field: "is_enabled",
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        roleType: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            field: "role_type",
+        },
+        accessRightId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            field: "access_right_id",
         },
     },
     {
-        sequelize,
-        modelName: "RoleAccessRight",
         tableName: "role_access_rights",
-        timestamps: true,
         underscored: true,
+        timestamps: true,
     }
 );
 export default RoleAccessRight;

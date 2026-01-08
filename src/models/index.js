@@ -177,17 +177,14 @@ Company.belongsTo(Corporate, {
 
 
 
-Role.belongsToMany(AccessRight, {
-  through: RoleAccessRight,
-  foreignKey: "role_id",
-  otherKey: "access_right_id",
-  as: "accessRights",
-});
-AccessRight.belongsToMany(Role, {
-  through: RoleAccessRight,
+/* ROLE TYPE ↔ ACCESS RIGHTS */
+AccessRight.hasMany(RoleAccessRight, {
   foreignKey: "access_right_id",
-  otherKey: "role_id",
-  as: "roles",
+  as: "roleMappings",
+});
+RoleAccessRight.belongsTo(AccessRight, {
+  foreignKey: "access_right_id",
+  as: "accessRight",
 });
 /* =====================================================
 
