@@ -174,6 +174,31 @@ VALUES
  '2026-01-09 13:07:33.082+05:30');
 
 
+{
+  "fullName": "Anil Mehta",
+  "email": "anil.mehta@kansai.com",
+  "phone": "9114523400",
+  "clientGroupId": "7",
+  "clientId": "5",
+  "roleId": "14b2aca0-2c6a-4d8b-87d6-0b98c2e0ab76",
+  "authTypeId": "09a648c4-d17a-4476-91ce-f17356268175",
+  "assignCorporateGroup": "",
+  "endDate": "2026-10-01",
+  "accessRights": [
+    "4bffe94f-88de-4305-92b0-8bc5eebbc864",
+        "138b879c-dec0-4f2b-aa56-7f102cd52145",
+        "354ba91a-2e5d-47e1-82e5-cc0a080cc435",
+        "1e143b5a-5ad7-4098-a94d-2ad19e68b6d7",
+        "e28362d8-80b3-4be8-820f-136ab8846877",
+        "76fd80fa-0c51-407b-8356-4514168f52b6",
+        "ba96b89c-cb9a-4569-b399-da9da6281575",
+        "d3b9ddc7-9853-4afb-8b28-033676f0f892",
+        "e92c38ef-9879-47d4-b084-fe6d2c3b98ed",
+        "b8cec1fe-8396-4ccc-a520-90b8939f4c99"
+  ],
+  "isActive": true
+}
+
 
 INSERT INTO role_access_rights (id, role_type, access_right_id, created_at, updated_at)
 VALUES
@@ -222,3 +247,4 @@ VALUES
 ('e28362d8-80b3-4be8-820f-136ab8846877', 'Dashboard', 'Access to Dasboard page', 'DASHBOARD', '2025-12-17T03:30:22.731Z', '2025-12-17T03:30:22.731Z'),
 ('15c5db8c-5562-45a9-9924-f6fa8b82d842', 'Manage Users', 'Access to Manage Users page', 'MANAGE_USERS', '2025-12-17T03:30:22.731Z', '2025-12-17T03:30:22.731Z');
 ``
+
