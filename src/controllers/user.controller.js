@@ -40,8 +40,6 @@ export async function createUser(req, res) {
       !email ||
       !phone ||
       !roleId ||
-      !relationshipManager ||
-      !claimsManager ||
       !clientGroupId ||
       !clientId ||
       !endDate ||
@@ -50,7 +48,7 @@ export async function createUser(req, res) {
       deleted === undefined
     ) {
       return res.status(400).json({
-        message: "All fields are mandatory for create user",
+        message: "Please fill the mandatory fields for creating a user",
       });
     }
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
@@ -95,6 +93,13 @@ export async function createUser(req, res) {
       const validExternal = allowedExternalTlds.some((tld) =>
         emailDomain.endsWith(tld)
       );
+      if (userType === "EXTERNAL") {
+        if (!relationshipManager || !claimsManager) {
+          return res.status(400).json({
+            message: "RM & CM required for external user",
+          });
+        }
+      }
       if (!validExternal) {
         return res.status(400).json({
           message:
