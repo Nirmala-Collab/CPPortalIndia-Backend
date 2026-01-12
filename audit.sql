@@ -82,6 +82,7 @@ VALUES
 
 
 
+
 INSERT INTO users (
   id,
   full_name,
@@ -107,7 +108,7 @@ VALUES
  NULL,
  NULL,
  'd22a0e84-2ff4-4f3a-9ae3-524251efe711',
- '0ec67c24-ef1d-43c6-9be3-1b369e99d1cd',
+ '7252b9a2-5511-4b94-be63-8b14a27f19ae',
  'INTERNAL',
  TRUE,
  '2026-01-07 15:18:14.776+05:30',
@@ -122,7 +123,7 @@ VALUES
  NULL,
  NULL,
  '3083557b-522b-4423-ab86-55b925ad8609',
- '0ec67c24-ef1d-43c6-9be3-1b369e99d1cd',
+ '7252b9a2-5511-4b94-be63-8b14a27f19ae',
  'INTERNAL',
  TRUE,
  '2026-01-07 15:17:49.469+05:30',
@@ -137,7 +138,7 @@ VALUES
  'Jaideep Despande',
  'Mukul Bhatia',
  '14b2aca0-2c6a-4d8b-87d6-0b98c2e0ab76',
- '09a648c4-d17a-4476-91ce-f17356268175',
+'148bc482-5591-4a24-8ff5-56ffcb52b8b7',
  'EXTERNAL',
  TRUE,
  '2026-01-07 15:17:16.405+05:30',
@@ -152,7 +153,7 @@ VALUES
  NULL,
  NULL,
  '5e94e753-16ad-48e0-a889-667ae637ba51',
- '0ec67c24-ef1d-43c6-9be3-1b369e99d1cd',
+ '7252b9a2-5511-4b94-be63-8b14a27f19ae',
  'INTERNAL',
  TRUE,
  '2026-01-07 15:19:33.688+05:30',
@@ -167,7 +168,7 @@ VALUES
  NULL,
  NULL,
  '8eefeb8a-7eca-4b3e-9c90-5241edf1b68c',
- '0ec67c24-ef1d-43c6-9be3-1b369e99d1cd',
+'7252b9a2-5511-4b94-be63-8b14a27f19ae',
  'INTERNAL',
  TRUE,
  '2026-01-09 13:07:33.082+05:30',
@@ -198,6 +199,7 @@ VALUES
   ],
   "isActive": true
 }
+
 
 
 INSERT INTO role_access_rights (id, role_type, access_right_id, created_at, updated_at)

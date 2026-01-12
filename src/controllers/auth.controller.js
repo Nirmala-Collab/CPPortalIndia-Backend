@@ -151,7 +151,7 @@ export async function sendOtp(req, res) {
 
         return res.status(400).json({ message: "Internal users do not use OTP" });
       }
-      if (!isAuthType(user, "email")) {
+      if (!isAuthType(user, "OTP")) {
         return res.status(400).json({ message: "User not configured for Email OTP" });
       }
       const latestLock = await Otp.findOne({
