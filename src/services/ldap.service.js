@@ -1,4 +1,7 @@
 import ldap from "ldapjs";
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.dev' });
+
 const {
  LDAP_URL,
  LDAP_DOMAIN,
