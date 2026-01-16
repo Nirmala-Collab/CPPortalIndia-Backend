@@ -11,7 +11,11 @@ import authTypeRoutes from './routes/authenticationType.routes.js'
 import accessRightsRoutes from './routes/accessRights.routes.js'
 import masterDataRoutes from './routes/masterData.routes.js'
 import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js'
+import policyRoutes from "./routes/policy.routes.js";
+import claimRoutes from "./routes/claims.routes.js";
+import faqRoutes from "./routes/faq.routes.js";
 dotenv.config();
+
 
 const app = express();
 app.use(cors({
@@ -22,10 +26,13 @@ app.use(cors({
 }
 ));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
 app.use("/auth", authRoutes);
+
 // test DB connection & sync tables once at startup
 (async () => {
   try {
@@ -45,4 +52,8 @@ app.use("/api/authType", authTypeRoutes);
 app.use("/api/accessRights", accessRightsRoutes)
 app.use('/api/masterDataSync', masterDataRoutes);
 app.use('/api/roleAccessRights', roleAccessRightsRoutes)
+app.use("/api/policies", policyRoutes);
+app.use("/api/claims", claimRoutes);
+app.use("/api/faqs", faqRoutes);
+
 export default app;
