@@ -7,7 +7,6 @@ import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.se
 import { sendOtpEmail } from "../services/otp.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
-import { where } from "sequelize";
 import { fetchUserById } from "../services/user.service.js";
 
 const { User, Otp, AuthenticationType, Role, AccessRight } = db;
@@ -32,7 +31,7 @@ export async function login(req, res) {
       return res.status(400).json({ message: "Email or Phone is required" });
     }
 
-    const whereClause = email ? { email } : { phone };
+    const whereClause = email ? { email, isActive: true, deleted: false } : { phone, isActive: true, deleted: false };
     const user = await User.findOne({
       where: whereClause,
       include: [
@@ -216,7 +215,10 @@ export async function verifyOtp(req, res) {
 
     if (email) {
       user = await User.findOne({
-        where: { email },
+        where: { email, 
+          isActive: true, 
+          deleted: false
+         },
         include: [
           {
             model: Role,
@@ -232,7 +234,7 @@ export async function verifyOtp(req, res) {
       })
       otpType = "EMAIL";
     } else if (phone) {
-      user = await User.findOne({ where: { phone } });
+      user = await User.findOne({ where: { phone, isActive: true, deleted: false  } });
       otpType = "PHONE";
     } else {
       return res.status(400).json({ message: "Email or Phone is required" });

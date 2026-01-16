@@ -50,6 +50,10 @@ export async function createUser(req, res) {
         message: "Please fill the mandatory fields for creating a user",
       });
     }
+    if(clientGroupId === "")
+    {
+      clientGroupId = null;
+    }
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: "At least one access right must be selected",
@@ -222,6 +226,10 @@ export async function updateUser(req, res) {
 export async function getUsers(req, res) {
   try {
     const users = await User.findAll({
+        where: {
+        isActive: true,
+        deleted: false,
+      },
       include: [
         { model: Role, as: "role" },
         { model: Corporate, as: "corporate" },
