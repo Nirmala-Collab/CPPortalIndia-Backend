@@ -3,7 +3,7 @@ import {
     requestRmCallback,
     uploadClaimDocument,
 } from "../controllers/claim.controller.js";
-import upload from "../middlewares/upload.middleware.js";
+import {upload} from "../utils/upload.js";
 const router = express.Router();
 // RM callback request
 router.post("/:claimId/rm-callback", requestRmCallback);

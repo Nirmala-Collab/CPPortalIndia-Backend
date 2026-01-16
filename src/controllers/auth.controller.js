@@ -4,7 +4,7 @@ import db from "../models/index.js";
 import { generateJwtToken } from "../services/jwt.service.js";
 import { createRefreshToken, invalidateRefreshToken } from "../services/refreshToken.service.js";
 import { createEmailOtpForUser, createPhoneOtpForUser } from "../services/otp.service.js";
-import { sendOtpEmail } from "../services/email.service.js";
+import { sendOtpEmail } from "../services/otp.service.js";
 import { authenticateWithAD } from "../services/ldap.service.js"; // plug your AD adapter
 import { logAudit } from "../utils/auditLogger.js";
 import { where } from "sequelize";
