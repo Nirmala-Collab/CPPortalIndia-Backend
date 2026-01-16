@@ -40,7 +40,6 @@ export async function createUser(req, res) {
       !email ||
       !phone ||
       !roleId ||
-      !clientGroupId ||
       !clientId ||
       !endDate ||
       !authTypeId ||
@@ -64,28 +63,14 @@ export async function createUser(req, res) {
     }
     /* -------------------- EMAIL VALIDATION -------------------- */
     const emailLower = email.toLowerCase();
-    // Block personal emails
-    //  const blockedDomains = [
-    //    "gmail.com",
-    //    "yahoo.com",
-    //    "outlook.com",
-    //    "hotmail.com",
-    //  ];
     const emailDomain = emailLower.split("@")[1];
     if (!emailDomain) {
       return res.status(400).json({ message: "Invalid email format" });
     }
-    //  if (blockedDomains.includes(emailDomain)) {
-    //    return res.status(400).json({
-    //      message: "Personal email IDs are not allowed",
-    //    });
-    //  }
-    // Internal Lockton domains
     const internalDomains = [
       "lockton.com",
     ];
-    // External allowed TLDs
-    const allowedExternalTlds = [".com", ".co.in", ".in"];
+    const allowedExternalTlds = [".com"];
     let userType = "EXTERNAL";
     if (internalDomains.includes(emailDomain)) {
       userType = "INTERNAL";
@@ -103,7 +88,7 @@ export async function createUser(req, res) {
       if (!validExternal) {
         return res.status(400).json({
           message:
-            "Invalid corporate email domain. Only .com, .co.in, .in allowed",
+            "Invalid corporate email domain. Only .com allowed",
         });
       }
     }
@@ -137,10 +122,7 @@ export async function createUser(req, res) {
     await user.setAccessRights(accessRights);
     return res.status(201).json({
       message: "User created successfully",
-      id: user.id,
-      email: maskEmail(email),
-      phone: maskPhone(phone),
-      userType: user.userType
+      user:user
     });
   } catch (error) {
     console.error("Create User Error:", error);
@@ -177,7 +159,6 @@ export async function updateUser(req, res) {
       !fullName ||
       !phone ||
       !roleId ||
-      !clientGroupId ||
       !clientId ||
       !relationshipManager ||
       !claimsManager ||
@@ -207,15 +188,6 @@ export async function updateUser(req, res) {
     if (phoneExists && phoneExists.id !== user.id) {
       return res.status(400).json({ message: "Phone number already exists" });
     }
-    // Validate auth type
-    //  const authTypeRecord = await AuthenticationType.findOne({
-    //    where: { name: authType },
-    //  });
-    //  if (!authTypeRecord) {
-    //    return res.status(400).json({
-    //      message: "Invalid authType. Allowed values are email, phone, ad",
-    //    });
-    //  }
     // Update user
     await user.update({
       fullName,
