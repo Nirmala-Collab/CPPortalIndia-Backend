@@ -14,12 +14,11 @@ import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js'
 import policyRoutes from "./routes/policy.routes.js";
 import claimRoutes from "./routes/claims.routes.js";
 import faqRoutes from "./routes/faq.routes.js";
-dotenv.config();
-
+dotenv.config({ path: '.env.qa' });
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:5001', "http://10.10.2.9:5001"],
+  origin: ['http://localhost:5001', "http://10.10.2.9:5001","http://localhost:5002","http://localhost:5003","http://localhost:5004","http://10.10.2.9:5002","http://10.10.2.9:5003"],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-type', 'Authorization'],
   credentials: true
