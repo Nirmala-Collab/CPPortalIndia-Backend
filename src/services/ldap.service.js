@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
 import ldap from 'ldapjs';
-dotenv.config({ path: '.env.dev' });
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.qa' });
 
 const { LDAP_URL, LDAP_DOMAIN, LDAP_BASE_DN } = process.env;
 if (!LDAP_URL || !LDAP_DOMAIN) {
