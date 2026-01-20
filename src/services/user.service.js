@@ -16,3 +16,18 @@ export async function fetchUserById(userId) {
         ],
     });
 }
+
+export async function fetchUserByName(name) {
+    if (!name) return null;
+    return User.findOne({
+        where: {
+            fullName: name,
+            isActive: true,
+            deleted: false,
+        },
+        include: [
+            { model: Role, as: "role" },
+    
+        ],
+    });
+}

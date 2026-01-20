@@ -1,6 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
-import { fetchUserById } from "../services/user.service.js";
+import { fetchUserById,fetchUserByName } from "../services/user.service.js";
 const {
   User,
   Role,
@@ -125,7 +125,6 @@ export async function createUser(req, res) {
     await user.setCompanies(clientIds);
     return res.status(201).json({
       message: "User created successfully",
-      user: user
     });
 
 
@@ -255,6 +254,19 @@ export async function getUserById(req, res) {
   try {
     const { id } = req.params;
     const user = await fetchUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("Get User Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+export async function getUserByName(req, res) {
+  try {
+    const { name } = req.params;
+    const user = await fetchUserByName(name);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
