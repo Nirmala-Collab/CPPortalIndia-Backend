@@ -17,7 +17,7 @@ Company.init(
     },
     clientGroupId: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       field: "client_group_id",
     },
     activeFlag: {
@@ -27,7 +27,7 @@ Company.init(
     },
   },
   {
-    sequelize,              // 🔴 REQUIRED
+    sequelize,
     modelName: "Company",
     tableName: "companies",
     underscored: true,

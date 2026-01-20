@@ -10,7 +10,7 @@ export async function fetchUserById(userId) {
         include: [
             { model: Role, as: "role" },
             { model: Corporate, as: "corporate" },
-            { model: Company, as: "company" },
+            { model: Company, as: "companies" },
             { model: AuthenticationType, as: "authType" },
             { model: AccessRight, as: "accessRights" },
         ],

@@ -1,8 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
 import { fetchUserById } from "../services/user.service.js";
-
-import { maskEmail, maskPhone } from "../utils/mask.js";
 const {
   User,
   Role,
@@ -24,7 +22,7 @@ export async function createUser(req, res) {
       phone,
       roleId,
       clientGroupId,
-      clientId,
+      clientIds,
       relationshipManager,
       claimsManager,
       endDate,
@@ -40,7 +38,6 @@ export async function createUser(req, res) {
       !email ||
       !phone ||
       !roleId ||
-      !clientId ||
       !endDate ||
       !authTypeId ||
       isActive === undefined ||
@@ -50,9 +47,11 @@ export async function createUser(req, res) {
         message: "Please fill the mandatory fields for creating a user",
       });
     }
-    if(clientGroupId === "")
-    {
-      clientGroupId = null;
+    const reAssignGroupId = clientGroupId ? clientGroupId : null
+    if (!Array.isArray(clientIds) || clientIds.length === 0) {
+      return res.status(400).json({
+        message: "At least one access right must be selected",
+      });
     }
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
@@ -112,8 +111,7 @@ export async function createUser(req, res) {
       phone,
       userType,
       roleId,
-      clientGroupId,
-      clientId,
+      clientGroupId: reAssignGroupId,
       assignCorporateGroup,
       relationshipManager,
       claimsManager,
@@ -124,10 +122,14 @@ export async function createUser(req, res) {
     });
     /* -------------------- ASSIGN ACCESS RIGHTS -------------------- */
     await user.setAccessRights(accessRights);
+    await user.setCompanies(clientIds);
     return res.status(201).json({
       message: "User created successfully",
-      user:user
+      user: user
     });
+
+
+
   } catch (error) {
     console.error("Create User Error:", error);
     return res.status(500).json({
@@ -163,7 +165,6 @@ export async function updateUser(req, res) {
       !fullName ||
       !phone ||
       !roleId ||
-      !clientId ||
       !relationshipManager ||
       !claimsManager ||
       !assignCorporateGroup ||
@@ -226,14 +227,14 @@ export async function updateUser(req, res) {
 export async function getUsers(req, res) {
   try {
     const users = await User.findAll({
-        where: {
+      where: {
         isActive: true,
         deleted: false,
       },
       include: [
         { model: Role, as: "role" },
         { model: Corporate, as: "corporate" },
-        { model: Company, as: "company" },
+        { model: Company, as: "companies" },
         { model: AuthenticationType, as: "authType" },
         { model: AccessRight, as: "accessRights" },
       ],
@@ -293,12 +294,10 @@ export async function getUsersByRoles(req, res) {
         },
       ],
     });
-    // ✅ Initialize response structure
     const grouped = {};
     roleList.forEach(role => {
       grouped[role] = [];
     });
-    // ✅ Group names by role
     users.forEach(user => {
       const roleName = user.role.roleName;
       grouped[roleName].push(user.fullName);
