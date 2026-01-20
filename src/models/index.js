@@ -21,6 +21,7 @@ import RefreshToken from "./refreshToken.model.js";
 import AccessRight from "./accessRight.model.js";
 
 import UserAccessRight from "./userAccessRight.model.js";
+import UserCompany from "./userCompany.model.js";
 
 /* =====================================================
 
@@ -120,19 +121,19 @@ User.belongsTo(Corporate, {
 
 // /* 6. USER ↔ COMPANY (Many-to-One)  ✅ NEW */
 
-Company.hasMany(User, {
 
-  foreignKey: "client_id",
-
-  as: "users",
-
+User.belongsToMany(Company, {
+  through: UserCompany,
+  foreignKey: "user_id",
+  otherKey: "client_id",
+  as: "companies",
 });
 
-User.belongsTo(Company, {
-
+Company.belongsToMany(User, {
+  through: UserCompany,
   foreignKey: "client_id",
-
-  as: "company",
+  otherKey: "user_id",
+  as: "users",
 
 });
 

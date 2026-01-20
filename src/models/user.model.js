@@ -28,12 +28,6 @@ const User = sequelize.define(
       allowNull: true,
       field: "client_group_id",
     },
-
-    clientId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: "client_id",
-    },
     endDate: {
       type: DataTypes.DATE,
       allowNull: true,
