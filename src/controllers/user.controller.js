@@ -38,6 +38,11 @@ export async function createUser(req, res) {
     ) {
       return res.status(400).json({
         message: 'Please fill the mandatory fields for creating a user',
+        fullName,
+        email,
+        phone,
+        roleId,
+        authTypeId,
       });
     }
     let reAssignGroupId = '50';
@@ -46,12 +51,7 @@ export async function createUser(req, res) {
         message: 'At least one access right must be selected',
       });
     }
-    /* -------------------- PHONE VALIDATION -------------------- */
-    if (!/^\d{10}$/.test(phone)) {
-      return res.status(400).json({
-        message: 'Phone number must be exactly 10 digits',
-      });
-    }
+
     /* -------------------- EMAIL VALIDATION -------------------- */
     const emailLower = email.toLowerCase();
     const emailDomain = emailLower.split('@')[1];
@@ -89,10 +89,7 @@ export async function createUser(req, res) {
     if (existingEmail) {
       return res.status(400).json({ message: 'Email already exists' });
     }
-    const existingPhone = await User.findOne({ where: { phone } });
-    if (existingPhone) {
-      return res.status(400).json({ message: 'Phone number already exists' });
-    }
+
     /* -------------------- CREATE USER -------------------- */
     const user = await User.create({
       fullName,
@@ -101,7 +98,7 @@ export async function createUser(req, res) {
       userType,
       roleId,
       clientGroupId: reAssignGroupId,
-      assignCorporateGroup,
+      assignCorporateGroup: assignCorporateGroup || 'NA',
       relationshipManager,
       claimsManager,
       endDate: endDate || null,

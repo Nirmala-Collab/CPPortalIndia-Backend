@@ -1,19 +1,21 @@
 // src/app.js
-import express from 'express';
-import dotenv from 'dotenv';
-import db from './models/index.js';
 import cors from 'cors';
-import { seedAuthenticationTypes } from './seed/authenticationTypes.seed.js';
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/user.routes.js';
-import roleRoutes from './routes/role.routes.js';
-import authTypeRoutes from './routes/authenticationType.routes.js';
+import dotenv from 'dotenv';
+import express from 'express';
+
+import { scheduleUserDeactivationJob } from './jobs/userDeactivation.job.js';
+import db from './models/index.js';
 import accessRightsRoutes from './routes/accessRights.routes.js';
-import masterDataRoutes from './routes/masterData.routes.js';
-import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js';
-import policyRoutes from './routes/policy.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import authTypeRoutes from './routes/authenticationType.routes.js';
 import claimRoutes from './routes/claims.routes.js';
 import faqRoutes from './routes/faq.routes.js';
+import masterDataRoutes from './routes/masterData.routes.js';
+import policyRoutes from './routes/policy.routes.js';
+import roleRoutes from './routes/role.routes.js';
+import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js';
+import userRoutes from './routes/user.routes.js';
+import { seedAuthenticationTypes } from './seed/authenticationTypes.seed.js';
 dotenv.config('path', '.env.qa');
 
 const app = express();

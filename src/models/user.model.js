@@ -71,7 +71,8 @@ const User = sequelize.define(
     },
     assignCorporteGroup: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      allowNull: true,
+      defaultValue: null,
       field: 'assign_corporate_group',
     },
   },
