@@ -1,53 +1,41 @@
-import { DataTypes } from "sequelize";
+import { DataTypes } from 'sequelize';
 
-import sequelize from "../config/db.js";
+import sequelize from '../config/db.js';
 
 const UserCompany = sequelize.define(
+  'UserCompany',
 
-    "UserCompany",
+  {
+    id: {
+      type: DataTypes.UUID,
 
-    {
+      defaultValue: DataTypes.UUIDV4,
 
-        id: {
-
-            type: DataTypes.UUID,
-
-            defaultValue: DataTypes.UUIDV4,
-
-            primaryKey: true,
-
-        },
-
-        user_id: {
-
-            type: DataTypes.UUID,
-
-            allowNull: false,
-            field: "user_id"
-
-        },
-
-        client_id: {
-
-            type: DataTypes.STRING,
-
-            allowNull: false,
-            field: "client_id"
-
-        },
-
+      primaryKey: true,
     },
 
-    {
+    user_id: {
+      type: DataTypes.UUID,
 
-        tableName: "user_companies",
+      allowNull: false,
+      field: 'user_id',
+    },
 
-        underscored: true,
+    client_id: {
+      type: DataTypes.STRING,
 
-        timestamps: true,
+      allowNull: true,
+      field: 'client_id',
+    },
+  },
 
-    }
+  {
+    tableName: 'user_companies',
 
+    underscored: true,
+
+    timestamps: true,
+  }
 );
 
 export default UserCompany;

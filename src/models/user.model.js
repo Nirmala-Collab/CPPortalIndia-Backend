@@ -1,7 +1,8 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/db.js";
+import { DataTypes } from 'sequelize';
+
+import sequelize from '../config/db.js';
 const User = sequelize.define(
-  "User",
+  'User',
   {
     id: {
       type: DataTypes.UUID,
@@ -11,7 +12,7 @@ const User = sequelize.define(
     fullName: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: "full_name",
+      field: 'full_name',
     },
     email: {
       type: DataTypes.STRING(255),
@@ -26,56 +27,56 @@ const User = sequelize.define(
     clientGroupId: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: "client_group_id",
+      field: 'client_group_id',
     },
     endDate: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: "end_date",
+      field: 'end_date',
     },
     relationshipManager: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      field: "relationship_manager",
+      field: 'relationship_manager',
     },
     claimsManager: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      field: "claims_manager",
+      field: 'claims_manager',
     },
     roleId: {
       type: DataTypes.UUID,
       allowNull: true,
-      field: "role_id",
+      field: 'role_id',
     },
     authTypeId: {
       type: DataTypes.UUID,
       allowNull: false,
-      field: "auth_type_id",
+      field: 'auth_type_id',
     },
     userType: {
-      type: DataTypes.STRING(20), // INTERNAL / EXTERNAL
+      type: DataTypes.STRING(20),
       allowNull: false,
-      field: "user_type",
+      field: 'user_type',
     },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-      field: "is_active",
+      field: 'is_active',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-      field: 'deleted'
+      field: 'deleted',
     },
     assignCorporteGroup: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-      field: "assign_corporate_group"
-    }
+      field: 'assign_corporate_group',
+    },
   },
   {
-    tableName: "users",
+    tableName: 'users',
     underscored: true,
     timestamps: true,
   }

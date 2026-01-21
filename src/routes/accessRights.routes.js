@@ -1,9 +1,8 @@
-import express from "express";
+import express from 'express';
 
-import { getAccessRights } from "../controllers/accessRights.controller.js";
+import { getAccessRights } from '../controllers/accessRights.controller.js';
 const router = express.Router();
 
-router.get('/', getAccessRights)
-
+router.get('/', getAccessRights);
 
 export default router;

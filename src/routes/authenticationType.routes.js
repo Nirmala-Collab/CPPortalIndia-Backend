@@ -1,9 +1,8 @@
-import express from "express";
+import express from 'express';
 
-import { getAuthenticationTypes } from "../controllers/authenticationType.controller.js";
+import { getAuthenticationTypes } from '../controllers/authenticationType.controller.js';
 const router = express.Router();
 
-router.get('/', getAuthenticationTypes)
-
+router.get('/', getAuthenticationTypes);
 
 export default router;
