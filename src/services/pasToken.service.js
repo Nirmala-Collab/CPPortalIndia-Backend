@@ -11,7 +11,7 @@ export async function generateAccessToken() {
     },
     {
       headers: {
-        'Ocp-Apim-Subscription-Key': process.env.SUBSCRIPTION_KEY,
+        'Ocp-Apim-Subscription-Key': process.env.MASTER_DATA_SUBSCRIPTION_KEY,
         'Content-type': 'application/json',
       },
     }

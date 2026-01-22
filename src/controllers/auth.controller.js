@@ -1,6 +1,6 @@
 import db from '../models/index.js';
+import { authenticateWithAD } from '../services/adAuthentication.service.js';
 import { generateJwtToken } from '../services/jwt.service.js';
-import { authenticateWithAD } from '../services/ldap.service.js'; // plug your AD adapter
 import { createEmailOtpForUser } from '../services/otp.service.js';
 import { sendOtpEmail } from '../services/otp.service.js';
 import { createRefreshToken, invalidateRefreshToken } from '../services/refreshToken.service.js';
@@ -97,21 +97,28 @@ export async function login(req, res) {
       }
 
       // If password provided -> AD authenticate
-      try {
-        await authenticateWithAD(user.email, password);
-      } catch (err) {
-        await logAudit({
-          user,
-          action: 'LOGIN',
-          status: 'FAILED',
-          reason: 'Invalid AD password',
-          failure_code: 'AD_001',
-          req,
-        });
+      const adResponse = await authenticateWithAD(user.email, password);
 
-        return res.status(401).json({ message: 'Invalid Active Directory credentials' });
+      await logAudit({
+        user,
+        action: 'LOGIN',
+        status: 'FAILED',
+        reason: adResponse.data?.message || 'AD authentication failed',
+        failure_code: 'AD_001',
+        req,
+      });
+
+      if (adResponse.status === 500) {
+        return res.status(500).json({
+          message: adResponse.data?.message || adResponse.data,
+        });
       }
 
+      if (adResponse.status === 401) {
+        return res.status(401).json({
+          message: adResponse.data?.message || 'Unauthorized',
+        });
+      }
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
