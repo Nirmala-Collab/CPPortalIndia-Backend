@@ -22,7 +22,7 @@ const User = sequelize.define(
     phone: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      unique: true,
+      unique: false,
     },
     clientGroupId: {
       type: DataTypes.STRING,
@@ -69,7 +69,7 @@ const User = sequelize.define(
       defaultValue: false,
       field: 'deleted',
     },
-    assignCorporteGroup: {
+    assignCorporateGroup: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: null,

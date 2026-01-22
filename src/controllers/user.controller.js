@@ -46,12 +46,15 @@ export async function createUser(req, res) {
       });
     }
     let reAssignGroupId = '50';
+    let ReAssignCorporateGroup;
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
       });
     }
-
+    if (assignCorporateGroup === 'NA' || !assignCorporateGroup) {
+      ReAssignCorporateGroup = null;
+    }
     /* -------------------- EMAIL VALIDATION -------------------- */
     const emailLower = email.toLowerCase();
     const emailDomain = emailLower.split('@')[1];
@@ -74,7 +77,7 @@ export async function createUser(req, res) {
         reAssignGroupId = clientGroupId ? clientGroupId : null;
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
           return res.status(400).json({
-            message: 'At least one access right must be selected',
+            message: 'At least one company must be selected',
           });
         }
       }
@@ -98,11 +101,10 @@ export async function createUser(req, res) {
       userType,
       roleId,
       clientGroupId: reAssignGroupId,
-      assignCorporateGroup: assignCorporateGroup || 'NA',
+      assignCorporateGroup: ReAssignCorporateGroup,
       relationshipManager,
       claimsManager,
       endDate: endDate || null,
-
       isActive,
       deleted,
       authTypeId,
@@ -128,12 +130,14 @@ export async function createUser(req, res) {
 export async function updateUser(req, res) {
   try {
     const userId = req.params.id;
+    console.log('Updating user with ID:', userId);
     const {
       fullName,
+      email,
       phone,
       roleId,
       clientGroupId,
-      clientId,
+      clientIds,
       relationshipManager,
       claimsManager,
       assignCorporateGroup,
@@ -148,9 +152,6 @@ export async function updateUser(req, res) {
       !fullName ||
       !phone ||
       !roleId ||
-      !relationshipManager ||
-      !claimsManager ||
-      !assignCorporateGroup ||
       !authTypeId ||
       isActive === undefined ||
       deleted === undefined
@@ -159,23 +160,49 @@ export async function updateUser(req, res) {
         message: 'All fields are mandatory for update',
       });
     }
-    if (!accessRights || accessRights.length === 0) {
-      return res.status(400).json({ message: 'At least one access right must be selected' });
+    if (!Array.isArray(accessRights) || accessRights.length === 0) {
+      return res.status(400).json({
+        message: 'At least one access right must be selected',
+      });
+    }
+    let ReAssignCorporateGroup;
+    if (assignCorporateGroup === 'NA' || !assignCorporateGroup) {
+      ReAssignCorporateGroup = null;
     }
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    console.log('Fetched user:', user.email);
+    if (email !== user.email) {
+      return res.status(400).json({ message: 'Email cannot be changed' });
+    }
+
+    if (user.userType === 'EXTERNAL') {
+      if (!relationshipManager || !claimsManager) {
+        return res.status(400).json({
+          message: 'RM & CM required for external user',
+        });
+      }
+      reAssignGroupId = clientGroupId ? clientGroupId : null;
+      if (!Array.isArray(clientIds) || clientIds.length === 0) {
+        return res.status(400).json({
+          message: 'At least one company must be selected',
+        });
+      }
+    }
+
     // Update user
     await user.update({
       fullName,
       phone,
+      email,
       roleId,
       clientGroupId,
-      clientId,
+      clientIds,
       relationshipManager,
       claimsManager,
-      assignCorporateGroup,
+      assignCorporateGroup: ReAssignCorporateGroup,
       endDate: endDate || null,
       isActive,
       deleted,
@@ -183,6 +210,7 @@ export async function updateUser(req, res) {
     });
     // Update access rights
     await user.setAccessRights(accessRights);
+    await user.setCompanies(clientIds);
     return res.status(200).json({
       message: 'User updated successfully',
       user,
