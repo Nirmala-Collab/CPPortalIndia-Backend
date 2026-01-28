@@ -273,7 +273,7 @@ export async function getUserByName(req, res) {
     }
     return res.status(200).json({ user });
   } catch (error) {
-    console.error('Get User Error:', error);
+    console.error('Get User By Name Error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -314,6 +314,33 @@ export async function getUsersByRoles(req, res) {
     return res.status(200).json(grouped);
   } catch (error) {
     console.error('Get Users By Roles Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function uploadProfilePhoto(req, res) {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    console.log('Uploaded file info:', req.body, req.file);
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const photoPath = `/uploads/profile-photos/${req.file.filename}`;
+
+    await user.update({ profilePhoto: photoPath });
+
+    return res.status(200).json({
+      message: 'Profile photo uploaded successfully',
+    });
+  } catch (error) {
+    console.error('Profile Photo Upload Error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }

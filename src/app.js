@@ -27,8 +27,10 @@ app.use(
       'http://localhost:5002',
       'http://localhost:5003',
       'http://localhost:5004',
+      'http://localhost:5005',
       'http://10.10.2.9:5002',
       'http://10.10.2.9:5003',
+      'http://10.10.2.9:5005',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-type', 'Authorization'],
@@ -65,5 +67,6 @@ app.use('/api/roleAccessRights', roleAccessRightsRoutes);
 app.use('/api/policies', policyRoutes);
 app.use('/api/claims', claimRoutes);
 app.use('/api/faqs', faqRoutes);
+app.use('/uploads', express.static('src/uploads'));
 
 export default app;

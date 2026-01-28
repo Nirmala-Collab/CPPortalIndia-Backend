@@ -75,6 +75,11 @@ const User = sequelize.define(
       defaultValue: null,
       field: 'assign_corporate_group',
     },
+    profilePhoto: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'profile_photo',
+    },
   },
   {
     tableName: 'users',

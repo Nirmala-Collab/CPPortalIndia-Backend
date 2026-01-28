@@ -1,7 +1,7 @@
 import db from '../models/index.js';
 import { generateNumericOtp } from '../utils/otp.js';
-
 import { sendEmail } from './email.service.js';
+import { authentication, uploadDocClient } from '../utils/mailContent.js';
 
 const { Otp } = db;
 const OTP_EXPIRY_MINUTES = 2;
@@ -31,14 +31,8 @@ export async function createEmailOtpForUser(user) {
 
 export async function sendOtpEmail(toEmail, otpCode) {
   return sendEmail({
-    to: toEmail,
-    subject: 'Your CP Portal Login OTP',
-    text: `Your OTP is ${otpCode}. Valid for 2 minutes.`,
-    html: `
-<p>Hello,</p>
-<p>Your OTP for <strong>CP Portal</strong> login is:</p>
-<h2>${otpCode}</h2>
-<p>This OTP is valid for <strong>2 minutes</strong>.</p>
-   `,
+    to: 'venkata.korumilli@tcs.com',
+    subject: authentication.subject,
+    html: authentication.body(otpCode),
   });
 }
