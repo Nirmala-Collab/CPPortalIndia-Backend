@@ -1,6 +1,9 @@
 import { Op } from 'sequelize';
-
+import fs from 'fs';
+import path from 'path';
 import db from '../models/index.js';
+import { sendEmail } from '../services/email.service.js';
+import { userCreated } from '../utils/mailContent.js';
 import { fetchUserById, fetchUserByName } from '../services/user.service.js';
 const { User, Role, Corporate, Company, AuthenticationType, AccessRight } = db;
 /**
@@ -112,6 +115,21 @@ export async function createUser(req, res) {
     /* -------------------- ASSIGN ACCESS RIGHTS -------------------- */
     await user.setAccessRights(accessRights);
     await user.setCompanies(clientIds);
+    const toEmail = email.toLowerCase();
+    if (toEmail) {
+      sendEmail({
+        to: 'venkata.korumilli@tcs.com',
+        subject: userCreated.subject,
+        html: userCreated.body({
+          fullName,
+          username: toEmail,
+          portalUrl: process.env.PORTAL_URL,
+          supportEmail: process.env.SUPPORT_EMAIL,
+        }),
+      })
+        .then(() => console.log(`User created email sent to ${toEmail}`))
+        .catch((err) => console.warn('Failed to send user created email:', err?.message || err));
+    }
     return res.status(201).json({
       message: 'User created successfully',
     });
@@ -177,7 +195,7 @@ export async function updateUser(req, res) {
     if (email !== user.email) {
       return res.status(400).json({ message: 'Email cannot be changed' });
     }
-
+    let reAssignGroupId;
     if (user.userType === 'EXTERNAL') {
       if (!relationshipManager || !claimsManager) {
         return res.status(400).json({
@@ -198,7 +216,7 @@ export async function updateUser(req, res) {
       phone,
       email,
       roleId,
-      clientGroupId,
+      clientGroupId: reAssignGroupId,
       clientIds,
       relationshipManager,
       claimsManager,
@@ -278,6 +296,40 @@ export async function getUserByName(req, res) {
   }
 }
 
+export async function getUsersByType(req, res) {
+  try {
+    const { usertype } = req.params;
+    if (!usertype) {
+      return res.status(400).json({
+        message: 'usertype param is required (internal|external)',
+      });
+    }
+    const type = usertype.toString().trim().toUpperCase();
+    console.log('Fetching users of type:', type);
+    if (!['INTERNAL', 'EXTERNAL'].includes(type)) {
+      return res.status(400).json({
+        message: 'Invalid usertype. Allowed values: internal, external',
+      });
+    }
+
+    const users = await User.findAll({
+      where: {
+        userType: type,
+        isActive: true,
+        deleted: false,
+      },
+      attributes: ['fullName'],
+      order: [['fullName', 'ASC']],
+    });
+
+    const names = users.map((u) => u.fullName);
+    return res.status(200).json(names);
+  } catch (error) {
+    console.error('Get Users By Type Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 export async function getUsersByRoles(req, res) {
   try {
     const { roles } = req.query;
@@ -320,16 +372,31 @@ export async function getUsersByRoles(req, res) {
 
 export async function uploadProfilePhoto(req, res) {
   try {
+    console.log('content-type:', req.headers['content-type']);
+    console.log('req.file:', req.file);
+    console.log('req.body:', req.body);
     const userId = req.params.id;
 
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log('Uploaded file info:', req.body, req.file);
 
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res
+        .status(400)
+        .json({ message: 'No file uploaded. Use form field name "profilePhoto".' });
+    }
+
+    // delete previous file if stored on disk
+    if (user.profilePhoto) {
+      try {
+        const prevRelative = user.profilePhoto.replace(/^\//, ''); // remove leading slash
+        const prevPath = path.join(process.cwd(), prevRelative);
+        if (fs.existsSync(prevPath)) fs.unlinkSync(prevPath);
+      } catch (err) {
+        console.warn('Failed to delete previous profile photo:', err.message);
+      }
     }
 
     const photoPath = `/uploads/profile-photos/${req.file.filename}`;
@@ -338,6 +405,7 @@ export async function uploadProfilePhoto(req, res) {
 
     return res.status(200).json({
       message: 'Profile photo uploaded successfully',
+      profilePhoto: photoPath,
     });
   } catch (error) {
     console.error('Profile Photo Upload Error:', error);

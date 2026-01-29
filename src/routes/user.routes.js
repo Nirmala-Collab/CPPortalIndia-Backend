@@ -1,11 +1,12 @@
 import express from 'express';
 import { uploadProfilePhoto } from '../controllers/user.controller.js';
-import { uploadProfilePhoto as upload } from '../utils/uploadProfile.js';
+import { uploadProfile } from '../utils/uploadProfile.js';
 import {
   createUser,
   updateUser,
   deleteUser,
   getUsers,
+  getUsersByType,
   getUserById,
   getUsersByRoles,
   getUserByName,
@@ -16,8 +17,9 @@ router.patch('/:id', updateUser);
 router.delete('/:id', deleteUser);
 router.get('/', getUsers);
 router.get('/user-by-role', getUsersByRoles);
+router.get('/userType/:usertype', getUsersByType);
 router.get('/name/:name', getUserByName);
 router.get('/:id', getUserById);
-router.post('/:id/profile-photo', upload.single('profilePhoto'), uploadProfilePhoto);
+router.post('/:id/profile-photo', uploadProfile.single('profilePhoto'), uploadProfilePhoto);
 
 export default router;

@@ -67,3 +67,24 @@ Lockton India Insurance Broking and Advisory Private
 Limited</p>
 `,
 };
+export const userCreated = {
+  subject: "User ID Created – OTP-Based Access to Evolv - (Lockton's Customer Portal)",
+  body: ({
+    fullName,
+    username,
+    portalUrl = process.env.PORTAL_URL || 'https://portal.example.com',
+    supportEmail = process.env.SUPPORT_EMAIL || 'support@lockton.com',
+  }) => `
+    <p>Dear ${fullName || 'User'},</p>
+    <p>We are pleased to inform you that your User ID has been successfully created for access to Evolv (Lockton Customer Portal).</p>
+    <h3>Portal Details:</h3>
+    <ul>
+      <li>Portal URL: <a href="${portalUrl}">${portalUrl}</a></li>
+      <li>Username: ${username}</li>
+      <li>Authentication Method: One-Time Password (OTP)</li>
+    </ul>
+    <p>For any access-related assistance, please contact <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
+    <p>Regards,<br/>Lockton India Insurance Brokers & Advisory Limited</p>
+    <p><small>This is a system-generated email. Please do not reply.</small></p>
+  `,
+};

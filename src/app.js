@@ -2,7 +2,7 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-
+import path from 'path';
 import { scheduleUserDeactivationJob } from './jobs/userDeactivation.job.js';
 import db from './models/index.js';
 import accessRightsRoutes from './routes/accessRights.routes.js';
@@ -67,6 +67,6 @@ app.use('/api/roleAccessRights', roleAccessRightsRoutes);
 app.use('/api/policies', policyRoutes);
 app.use('/api/claims', claimRoutes);
 app.use('/api/faqs', faqRoutes);
-app.use('/uploads', express.static('src/uploads'));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 export default app;

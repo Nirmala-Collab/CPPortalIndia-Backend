@@ -2,7 +2,7 @@ import transporter from '../config/mailer.js';
 export async function sendEmail({ to, cc = [], subject, html }) {
   try {
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM_EMAIL,
+      from: process.env.SUPPORT_EMAIL,
       to,
       cc,
       subject,
