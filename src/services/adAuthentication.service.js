@@ -27,27 +27,5 @@ export async function authenticateWithAD(email, password) {
     console.log('AD Authentication Error:', error.response.status);
     console.log('AD Authentication Error Data:', error.response.data);
     return error.response;
-    // console.log('AD Authentication Error:', error.response.status);
-    // if (error.response) {
-    //   const adMessage =
-    //     error.response.data?.message ||
-    //     error.response.data?.error ||
-    //     error.response.data ||
-    //     'AD authentication failed';
-
-    //   throw {
-    //     type: 'AD_ERROR',
-    //     status: error.response.status,
-    //     message: adMessage, // 👈 RAW MESSAGE
-    //     raw: error.response.data, // optional (for logs)
-    //   };
-    // }
-
-    // // Network / timeout / unknown error
-    // throw {
-    //   type: 'AD_NETWORK_ERROR',
-    //   status: 500,
-    //   message: error.message,
-    // };
   }
 }

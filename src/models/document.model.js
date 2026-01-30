@@ -15,7 +15,7 @@ const Document = sequelize.define(
       field: 'entity_type',
     },
     entityId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING(100),
       allowNull: false,
       field: 'entity_id',
     },

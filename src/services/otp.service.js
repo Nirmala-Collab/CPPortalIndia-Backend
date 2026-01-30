@@ -31,7 +31,7 @@ export async function createEmailOtpForUser(user) {
 
 export async function sendOtpEmail(toEmail, otpCode) {
   return sendEmail({
-    to: 'venkata.korumilli@tcs.com',
+    to: toEmail,
     subject: authentication.subject,
     html: authentication.body(otpCode),
   });

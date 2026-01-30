@@ -30,7 +30,7 @@ app.use(
       'http://localhost:5005',
       'http://10.10.2.9:5002',
       'http://10.10.2.9:5003',
-      'http://10.10.2.9:5005',
+      'http://10.10.10.4:5005',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-type', 'Authorization'],

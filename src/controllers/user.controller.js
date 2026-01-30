@@ -148,7 +148,6 @@ export async function createUser(req, res) {
 export async function updateUser(req, res) {
   try {
     const userId = req.params.id;
-    console.log('Updating user with ID:', userId);
     const {
       fullName,
       email,
@@ -191,7 +190,6 @@ export async function updateUser(req, res) {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log('Fetched user:', user.email);
     if (email !== user.email) {
       return res.status(400).json({ message: 'Email cannot be changed' });
     }
@@ -305,7 +303,6 @@ export async function getUsersByType(req, res) {
       });
     }
     const type = usertype.toString().trim().toUpperCase();
-    console.log('Fetching users of type:', type);
     if (!['INTERNAL', 'EXTERNAL'].includes(type)) {
       return res.status(400).json({
         message: 'Invalid usertype. Allowed values: internal, external',
@@ -372,9 +369,6 @@ export async function getUsersByRoles(req, res) {
 
 export async function uploadProfilePhoto(req, res) {
   try {
-    console.log('content-type:', req.headers['content-type']);
-    console.log('req.file:', req.file);
-    console.log('req.body:', req.body);
     const userId = req.params.id;
 
     const user = await User.findByPk(userId);

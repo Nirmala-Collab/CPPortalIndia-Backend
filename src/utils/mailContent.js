@@ -12,6 +12,25 @@ export const uploadDocClient = {
   body: (claimId) =>
     `<p>Dear Customer,</p> <p>We would like to inform you that your claims document has been successfully uploaded on the Evolv Portal.</p> <p>Document Details</p> <h2>Uploaded on: ${new Date().toLocaleString()}</h2><h2>Reference ID: ${claimId}</h2><h2>Status: Submitted / Under Review</h2><p>Our team will review the submitted document andupdate you in case any additional information or actionis required from your end.</p><p>You may log in to the evolv Portal at any time to view the status of claims.</p><p>Warm regards,</p><p>Team Evolv</p> <p>Lockton India Insurance Broking and Advisory PrivateLimited</p>`,
 };
+export const uploadDeclaration = {
+  subject: 'Declaration Uploaded Successfully – Evolv Portal - Do not Reply!!',
+  body: (policyNo) => `<p>Dear Customer,</p>
+<p>We would like to inform you that your declaration has
+been successfully uploaded on the Evolv Portal.</p>
+<p>Declaration Details</p>
+<h2>Uploaded on: ${new Date().toLocaleString()}</h2><h2>Reference ID: ${policyNo}</h2>
+Status: Submitted / Under Review
+Our team will review the submitted declaration and
+update you in case any additional information or action
+is required from your end.
+You may log in to the Evolv Portal at any time to view
+the status or download a copy of the uploaded
+declaration.
+Warm Regards,
+Team Evolv
+Lockton India Insurance Broking and Advisory Private
+Limited`,
+};
 
 export const rmCallbackRequest = {
   subject: 'We’ve received your request – Our Relationship Manager will call you shortly',
