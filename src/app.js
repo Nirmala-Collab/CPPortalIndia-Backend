@@ -43,7 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
 (async () => {
   try {
@@ -67,6 +67,6 @@ app.use('/api/roleAccessRights', roleAccessRightsRoutes);
 app.use('/api/policies', policyRoutes);
 app.use('/api/claims', claimRoutes);
 app.use('/api/faqs', faqRoutes);
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 export default app;
