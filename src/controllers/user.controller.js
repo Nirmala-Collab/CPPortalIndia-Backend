@@ -246,18 +246,16 @@ export async function updateUser(req, res) {
  * ----------------------------------------------------
  */
 
-
 export async function getUsers(req, res) {
   try {
-    // const { loggedInUserId } = req.body; // or req.query
-
+    const { loggedInUser } = req.query; // or req.query
     const users = await User.findAll({
       where: {
         isActive: true,
         deleted: false,
-        // ...(loggedInUserId && {
-        //   id: { [Op.ne]: loggedInUserId },
-        // }),
+        ...(loggedInUser && {
+          id: { [Op.ne]: loggedInUser },
+        }),
       },
       include: [
         { model: Role, as: 'role' },
@@ -274,7 +272,6 @@ export async function getUsers(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
-
 
 /**
  * ----------------------------------------------------
