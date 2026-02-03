@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.development' });
+
 export const authentication = {
   subject: 'Your One-Time Password (OTP) for Evolv - Lockton Customer Portal - Do not Reply!!',
   body: (otpCode) => `<p>Dear Customer,</p>
@@ -33,7 +36,8 @@ Limited`,
 };
 
 export const rmCallbackRequest = {
-  subject: 'We’ve received your request – Our Relationship Manager will call you shortly',
+  subject:
+    'We’ve received your request – Our Relationship Manager will call you shortly - Do not Reply!!',
   body: (requestId, userName) =>
     `<p>Dear ${userName}</p>,
 <p>Thank you for reaching out to us.
@@ -59,7 +63,7 @@ Limited </p
 };
 
 export const faqRmNotification = {
-  subject: 'We’ve received your query – Our team is reviewing it',
+  subject: 'We’ve received your query – Our team is reviewing it - Do not Reply!!',
   body: (requestId, userName, companyName) =>
     `<p>Dear ${userName},</p>
 <p>
@@ -87,12 +91,13 @@ Limited</p>
 `,
 };
 export const userCreated = {
-  subject: "User ID Created – OTP-Based Access to Evolv - (Lockton's Customer Portal)",
+  subject:
+    "User ID Created – OTP-Based Access to Evolv - (Lockton's Customer Portal) - Do not Reply!!",
   body: ({
     fullName,
     username,
     portalUrl = process.env.PORTAL_URL || 'https://portal.example.com',
-    supportEmail = process.env.SUPPORT_EMAIL || 'support@lockton.com',
+    supportEmail = process.env.SUPPORT_EMAIL || 'evolv.support@lockton-India.com',
   }) => `
     <p>Dear ${fullName || 'User'},</p>
     <p>We are pleased to inform you that your User ID has been successfully created for access to Evolv (Lockton Customer Portal).</p>
