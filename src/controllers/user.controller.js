@@ -248,16 +248,14 @@ export async function updateUser(req, res) {
 
 export async function getUsers(req, res) {
   try {
-    // console.log('params', req.params);
-    // const { loggedInUserId } = req.body; // or req.query
-
+    const { loggedInUser } = req.query; // or req.query
     const users = await User.findAll({
       where: {
         isActive: true,
         deleted: false,
-        // ...(loggedInUserId && {
-        //   id: { [Op.ne]: loggedInUserId },
-        // }),
+        ...(loggedInUser && {
+          id: { [Op.ne]: loggedInUser },
+        }),
       },
       include: [
         { model: Role, as: 'role' },
