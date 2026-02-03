@@ -118,7 +118,7 @@ export async function createUser(req, res) {
     const toEmail = email.toLowerCase();
     if (toEmail) {
       sendEmail({
-        to: 'venkata.korumilli@tcs.com',
+        to: toEmail,
         subject: userCreated.subject,
         html: userCreated.body({
           fullName,
@@ -177,6 +177,8 @@ export async function updateUser(req, res) {
         message: 'All fields are mandatory for update',
       });
     }
+
+    console.log('Client GroupId......:', req.body, phone);
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
@@ -207,7 +209,9 @@ export async function updateUser(req, res) {
         });
       }
     }
-
+    if (user.userType === 'INTERNAL') {
+      reAssignGroupId = clientGroupId;
+    }
     // Update user
     await user.update({
       fullName,
@@ -241,12 +245,19 @@ export async function updateUser(req, res) {
  * GET ALL USERS (RETURN EVERYTHING)
  * ----------------------------------------------------
  */
+
+
 export async function getUsers(req, res) {
   try {
+    // const { loggedInUserId } = req.body; // or req.query
+
     const users = await User.findAll({
       where: {
         isActive: true,
         deleted: false,
+        // ...(loggedInUserId && {
+        //   id: { [Op.ne]: loggedInUserId },
+        // }),
       },
       include: [
         { model: Role, as: 'role' },
@@ -256,12 +267,15 @@ export async function getUsers(req, res) {
         { model: AccessRight, as: 'accessRights' },
       ],
     });
+
     return res.status(200).json(users);
   } catch (error) {
     console.error('Get Users Error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+
 /**
  * ----------------------------------------------------
  * GET SINGLE USER
