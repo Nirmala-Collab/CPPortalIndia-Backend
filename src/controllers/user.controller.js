@@ -246,9 +246,9 @@ export async function updateUser(req, res) {
  * ----------------------------------------------------
  */
 
-
 export async function getUsers(req, res) {
   try {
+    // console.log('params', req.params);
     // const { loggedInUserId } = req.body; // or req.query
 
     const users = await User.findAll({
@@ -274,7 +274,6 @@ export async function getUsers(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
-
 
 /**
  * ----------------------------------------------------

@@ -1,7 +1,7 @@
 // src/config/mailer.js
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.development' });
+dotenv.config({ path: '.env.qa' });
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT),
