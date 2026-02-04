@@ -443,41 +443,6 @@ export async function verifyOtp(req, res) {
   }
 }
 
-/**
- * /auth/logout
- */
-export async function logout(req, res) {
-  try {
-    const { refreshToken } = req.body || {};
-    if (!refreshToken) {
-      await logAudit({
-        action: 'LOGOUT',
-        status: 'FAILED',
-        reason: 'Refresh token missing',
-        failure_code: 'LOGOUT_001',
-        req,
-      });
-
-      return res.status(400).json({ message: 'Refresh token is required' });
-    }
-    await invalidateRefreshToken(refreshToken);
-    await logAudit({ action: 'LOGOUT', status: 'SUCCESS', reason: 'Logout successful', req });
-
-    return res.status(200).json({ message: 'Logged out successfully' });
-  } catch (error) {
-    console.error('Logout Error:', error);
-    await logAudit({
-      action: 'LOGOUT',
-      status: 'FAILED',
-      reason: error.message,
-      failure_code: 'SERVER_500',
-      req,
-    });
-
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-}
-
 async function findActiveUser(where) {
   const user = await User.findOne({
     where,

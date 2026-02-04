@@ -37,8 +37,8 @@ export async function uploadClaimDocument(req, res) {
 
     if (claims_manager_email || rm_email) {
       await sendEmail({
-        to: user_email,
-        cc: [claims_manager_email, rm_email].filter(Boolean),
+        to: 'venkata.korumilli@tcs.com',
+        // cc: [claims_manager_email, rm_email].filter(Boolean),
         subject: uploadDocClient.subject,
         html: uploadDocClient.body(claims_id),
       });

@@ -1,7 +1,8 @@
 import db from '../models/index.js';
-import { generateNumericOtp } from '../utils/otp.js';
-import { sendEmail } from './email.service.js';
 import { authentication, uploadDocClient } from '../utils/mailContent.js';
+import { generateNumericOtp } from '../utils/otp.js';
+
+import { sendEmail } from './email.service.js';
 
 const { Otp } = db;
 const OTP_EXPIRY_MINUTES = 2;

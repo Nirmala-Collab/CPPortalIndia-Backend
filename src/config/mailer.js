@@ -1,5 +1,4 @@
 // src/config/mailer.js
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.qa' });
 const transporter = nodemailer.createTransport({

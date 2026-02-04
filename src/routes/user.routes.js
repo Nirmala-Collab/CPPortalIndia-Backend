@@ -1,6 +1,6 @@
 import express from 'express';
+
 import { uploadProfilePhoto } from '../controllers/user.controller.js';
-import { uploadProfile } from '../utils/uploadProfile.js';
 import {
   createUser,
   updateUser,
@@ -11,6 +11,7 @@ import {
   getUsersByRoles,
   getUserByName,
 } from '../controllers/user.controller.js';
+import { uploadProfile } from '../utils/uploadProfile.js';
 const router = express.Router();
 router.post('/', createUser);
 router.patch('/:id', updateUser);
