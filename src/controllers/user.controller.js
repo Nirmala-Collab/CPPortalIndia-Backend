@@ -1,10 +1,12 @@
-import { Op } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
+
+import { Op } from 'sequelize';
+
 import db from '../models/index.js';
 import { sendEmail } from '../services/email.service.js';
-import { userCreated } from '../utils/mailContent.js';
 import { fetchUserById, fetchUserByName } from '../services/user.service.js';
+import { userCreated } from '../utils/mailContent.js';
 const { User, Role, Corporate, Company, AuthenticationType, AccessRight } = db;
 /**
  * ----------------------------------------------------
@@ -55,9 +57,6 @@ export async function createUser(req, res) {
         message: 'At least one access right must be selected',
       });
     }
-    if (assignCorporateGroup === 'NA' || !assignCorporateGroup) {
-      ReAssignCorporateGroup = null;
-    }
     /* -------------------- EMAIL VALIDATION -------------------- */
     const emailLower = email.toLowerCase();
     const emailDomain = emailLower.split('@')[1];
@@ -67,8 +66,10 @@ export async function createUser(req, res) {
     const internalDomains = ['lockton.com'];
     const allowedExternalTlds = ['.com'];
     let userType = 'EXTERNAL';
+    let reassignCorporateGroup = assignCorporateGroup;
     if (internalDomains.includes(emailDomain)) {
       userType = 'INTERNAL';
+      reassignCorporateGroup = null;
     } else {
       const validExternal = allowedExternalTlds.some((tld) => emailDomain.endsWith(tld));
       if (userType === 'EXTERNAL') {
@@ -104,9 +105,9 @@ export async function createUser(req, res) {
       userType,
       roleId,
       clientGroupId: reAssignGroupId,
-      assignCorporateGroup: ReAssignCorporateGroup,
-      relationshipManager,
-      claimsManager,
+      assignCorporateGroup: reassignCorporateGroup,
+      relationshipManager: relationshipManager || null,
+      claimsManager: claimsManager || null,
       endDate: endDate || null,
       isActive,
       deleted,
@@ -184,10 +185,7 @@ export async function updateUser(req, res) {
         message: 'At least one access right must be selected',
       });
     }
-    let ReAssignCorporateGroup;
-    if (assignCorporateGroup === 'NA' || !assignCorporateGroup) {
-      ReAssignCorporateGroup = null;
-    }
+
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -209,8 +207,10 @@ export async function updateUser(req, res) {
         });
       }
     }
+    let reassignCorporateGroup = assignCorporateGroup;
     if (user.userType === 'INTERNAL') {
       reAssignGroupId = clientGroupId;
+      reassignCorporateGroup = null;
     }
     // Update user
     await user.update({
@@ -220,9 +220,9 @@ export async function updateUser(req, res) {
       roleId,
       clientGroupId: reAssignGroupId,
       clientIds,
-      relationshipManager,
-      claimsManager,
-      assignCorporateGroup: ReAssignCorporateGroup,
+      relationshipManager: relationshipManager || null,
+      claimsManager: claimsManager || null,
+      assignCorporateGroup: reassignCorporateGroup,
       endDate: endDate || null,
       isActive,
       deleted,
@@ -398,7 +398,9 @@ export async function uploadProfilePhoto(req, res) {
       try {
         const prevRelative = user.profilePhoto.replace(/^\//, ''); // remove leading slash
         const prevPath = path.join(process.cwd(), prevRelative);
-        if (fs.existsSync(prevPath)) fs.unlinkSync(prevPath);
+        if (fs.existsSync(prevPath)) {
+          fs.unlinkSync(prevPath);
+        }
       } catch (err) {
         console.warn('Failed to delete previous profile photo:', err.message);
       }

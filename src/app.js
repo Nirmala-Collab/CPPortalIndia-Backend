@@ -1,8 +1,10 @@
 // src/app.js
+import path from 'path';
+
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import path from 'path';
+
 import { scheduleUserDeactivationJob } from './jobs/userDeactivation.job.js';
 import db from './models/index.js';
 import accessRightsRoutes from './routes/accessRights.routes.js';

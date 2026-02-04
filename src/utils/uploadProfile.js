@@ -1,6 +1,7 @@
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import multer from 'multer';
 
 const uploadDir = path.join(process.cwd(), 'uploads', 'profile-photos');
 fs.mkdirSync(uploadDir, { recursive: true });
@@ -15,8 +16,11 @@ const storage = multer.diskStorage({
 });
 
 function fileFilter(req, file, cb) {
-  if (/^image\/(jpeg|png|gif|webp)$/.test(file.mimetype)) cb(null, true);
-  else cb(new Error('Only image files (jpeg, png, gif, webp) are allowed'), false);
+  if (/^image\/(jpeg|png|gif|webp)$/.test(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files (jpeg, png, gif, webp) are allowed'), false);
+  }
 }
 
 export const uploadProfile = multer({

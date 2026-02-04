@@ -1,6 +1,7 @@
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import multer from 'multer';
 
 const uploadDir = path.join(process.cwd(), 'uploads', 'documents');
 fs.mkdirSync(uploadDir, { recursive: true });
