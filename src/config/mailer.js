@@ -1,4 +1,3 @@
-// src/config/mailer.js
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 dotenv.config({ path: '.env.development' });
