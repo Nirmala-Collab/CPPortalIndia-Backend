@@ -295,6 +295,7 @@ export async function sendOtp(req, res) {
 export async function verifyOtp(req, res) {
   try {
     const { email, otp } = req.body || {};
+
     if (!otp) {
       await logAudit({
         action: 'VERIFY_OTP',
@@ -343,6 +344,7 @@ export async function verifyOtp(req, res) {
 
       return res.status(404).json({ message: 'User not found' });
     }
+
     if (user.userType !== 'EXTERNAL') {
       await logAudit({
         user,
@@ -365,6 +367,7 @@ export async function verifyOtp(req, res) {
       },
       order: [['createdAt', 'DESC']],
     });
+
     if (!otpRecord) {
       await logAudit({
         user,
@@ -385,22 +388,24 @@ export async function verifyOtp(req, res) {
 
     // Match check
     let otpWarningMessage = 'Invalid OTP';
-    // ----------------------------------------------
+
     if (otpRecord.otpCode !== otp) {
       otpRecord.attempts += 1;
       await otpRecord.save();
-      // 4th attempt
+
+      // 4th attempt warning
       if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
         otpWarningMessage =
           'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
       }
-      //5th attempt
 
+      // Lock on max attempts
       if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
         otpRecord.isUsed = true;
         otpRecord.locked = true;
-        otpRecord.lockedUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        otpRecord.lockedUntil = new Date(Date.now() + 60 * 60 * 1000);
         await otpRecord.save();
+
         otpWarningMessage =
           'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
       }
@@ -420,10 +425,21 @@ export async function verifyOtp(req, res) {
       });
     }
 
+    // -------------------------------
+    // ✅ SUCCESS: Increment login count
+    // -------------------------------
+    user.loginCount = (user.loginCount || 0) + 1;
+    await user.save();
+
+    // Mark OTP as used
+    otpRecord.isUsed = true;
+    await otpRecord.save();
+
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
     const userData = await fetchUserById(user.id);
+
     await logAudit({
       user,
       action: 'VERIFY_OTP',
@@ -431,11 +447,13 @@ export async function verifyOtp(req, res) {
       reason: 'OTP verified successfully',
       req,
     });
+
     return res.status(200).json({
       message: 'OTP verified successfully',
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
       user: userData,
+      loginCount: user.loginCount, // 👈 optional but useful for FE
     });
   } catch (error) {
     console.error('Verify OTP Error:', error);

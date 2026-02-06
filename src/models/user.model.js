@@ -80,6 +80,11 @@ const User = sequelize.define(
       allowNull: true,
       field: 'profile_photo',
     },
+    loginCount: {
+      type: DataTypes.NUMBER,
+      defaultValue: 0,
+      field: 'login_count',
+    },
   },
   {
     tableName: 'users',
