@@ -7,9 +7,9 @@ const { User } = db;
 export function scheduleUserDeactivationJob() {
   // Schedule the job to run daily at midnight
   cron.schedule(
-    '5 0 * * *',
+    '* * * * *',
     async () => {
-      console.log('Running user deactivation job...');
+      console.log('🔥 CRON TRIGGERED AT', new Date().toISOString());
       try {
         console.log(' [CRON] Running user deactivation job...');
         const today = new Date();
@@ -21,7 +21,7 @@ export function scheduleUserDeactivationJob() {
           {
             where: {
               endDate: {
-                [Op.lt]: today,
+                [Op.lte]: today,
               },
               isActive: true,
               deleted: false,

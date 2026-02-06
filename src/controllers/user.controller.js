@@ -50,8 +50,8 @@ export async function createUser(req, res) {
         authTypeId,
       });
     }
+
     let reAssignGroupId = '50';
-    let ReAssignCorporateGroup;
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
@@ -67,7 +67,7 @@ export async function createUser(req, res) {
     const allowedExternalTlds = ['.com'];
     let userType = 'EXTERNAL';
     let reassignCorporateGroup = assignCorporateGroup;
-    if (internalDomains.includes(emailDomain)) {
+    if (internalDomains.includes(emailDomain.toLowerCase())) {
       userType = 'INTERNAL';
       reassignCorporateGroup = null;
     } else {
@@ -78,6 +78,10 @@ export async function createUser(req, res) {
             message: 'RM & CM required for external user',
           });
         }
+        if (reassignCorporateGroup == '' || reassignCorporateGroup == 'NA') {
+          reassignCorporateGroup = null;
+        }
+
         reAssignGroupId = clientGroupId ? clientGroupId : null;
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
           return res.status(400).json({
@@ -194,12 +198,18 @@ export async function updateUser(req, res) {
       return res.status(400).json({ message: 'Email cannot be changed' });
     }
     let reAssignGroupId;
+    let reassignCorporateGroup = assignCorporateGroup;
+
     if (user.userType === 'EXTERNAL') {
       if (!relationshipManager || !claimsManager) {
         return res.status(400).json({
           message: 'RM & CM required for external user',
         });
       }
+      if (assignCorporateGroup == '' || assignCorporateGroup == 'NA') {
+        reassignCorporateGroup = null;
+      }
+
       reAssignGroupId = clientGroupId ? clientGroupId : null;
       if (!Array.isArray(clientIds) || clientIds.length === 0) {
         return res.status(400).json({
@@ -207,7 +217,6 @@ export async function updateUser(req, res) {
         });
       }
     }
-    let reassignCorporateGroup = assignCorporateGroup;
     if (user.userType === 'INTERNAL') {
       reAssignGroupId = clientGroupId;
       reassignCorporateGroup = null;
