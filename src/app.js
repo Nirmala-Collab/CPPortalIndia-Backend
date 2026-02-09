@@ -19,7 +19,7 @@ import internalRoutes from './routes/internal.routes.js';
 import roleAccessRightsRoutes from './routes/roleAccessRight.routes.js';
 import userRoutes from './routes/user.routes.js';
 import { seedAuthenticationTypes } from './seed/authenticationTypes.seed.js';
-dotenv.config('path', '.env.development');
+dotenv.config('path', '.env.uat');
 
 const app = express();
 app.use(

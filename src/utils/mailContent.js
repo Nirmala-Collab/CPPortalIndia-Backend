@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.development' });
+dotenv.config({ path: '.env.uat' });
 
 export const authentication = {
   subject: 'Your One-Time Password (OTP) for Evolv - Lockton Customer Portal - Do not Reply!!',

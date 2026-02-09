@@ -2,7 +2,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 
 import { generateAccessToken } from './pasToken.service.js';
-dotenv.config({ path: '.env.development' });
+dotenv.config({ path: '.env.uat' });
 export async function authenticateWithAD(email, password) {
   try {
     const token = await generateAccessToken();
