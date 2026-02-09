@@ -428,7 +428,11 @@ export async function verifyOtp(req, res) {
     // -------------------------------
     // ✅ SUCCESS: Increment login count
     // -------------------------------
-    user.loginCount = (user.loginCount || 0) + 1;
+    if (user.firstLogin === null) {
+      user.firstLogin = true;
+    } else {
+      user.firstLogin = false;
+    }
     await user.save();
 
     // Mark OTP as used
@@ -453,7 +457,7 @@ export async function verifyOtp(req, res) {
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
       user: userData,
-      loginCount: user.loginCount, // 👈 optional but useful for FE
+      firstLogin: user.firstLogin, // 👈 optional but useful for FE
     });
   } catch (error) {
     console.error('Verify OTP Error:', error);

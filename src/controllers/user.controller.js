@@ -260,7 +260,6 @@ export async function getUsers(req, res) {
     const { loggedInUser } = req.query; // or req.query
     const users = await User.findAll({
       where: {
-        isActive: true,
         deleted: false,
         ...(loggedInUser && {
           id: { [Op.ne]: loggedInUser },

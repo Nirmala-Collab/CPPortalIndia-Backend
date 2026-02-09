@@ -80,10 +80,10 @@ const User = sequelize.define(
       allowNull: true,
       field: 'profile_photo',
     },
-    loginCount: {
-      type: DataTypes.NUMBER,
-      defaultValue: 0,
-      field: 'login_count',
+    firstLogin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: null,
+      field: 'first_login',
     },
   },
   {
