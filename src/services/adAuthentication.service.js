@@ -6,7 +6,7 @@ dotenv.config({ path: '.env.qa' });
 export async function authenticateWithAD(email, password) {
   try {
     const token = await generateAccessToken();
-
+    console.log('token', token);
     const response = await axios.post(
       process.env.AD_CREDENTIALS_URL,
       {
@@ -21,11 +21,9 @@ export async function authenticateWithAD(email, password) {
         },
       }
     );
-
     return response;
   } catch (error) {
-    console.log('AD Authentication Error:', error.response.status);
-    console.log('AD Authentication Error Data:', error.response.data);
+    console.log('AD Authentication Error:', error);
     return error.response;
   }
 }

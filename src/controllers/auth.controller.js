@@ -103,7 +103,7 @@ export async function login(req, res) {
         user,
         action: 'LOGIN',
         status: 'FAILED',
-        reason: adResponse.data?.message || 'AD authentication failed',
+        reason: adResponse || 'AD authentication failed',
         failure_code: 'AD_001',
         req,
       });
