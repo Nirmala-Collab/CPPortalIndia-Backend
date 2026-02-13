@@ -271,7 +271,6 @@ export async function sendOtp(req, res) {
 
       return res.status(200).json({
         message: 'OTP sent to your registered email',
-        ...(RETURN_OTP_IN_RESPONSE ? { otp: otpCode } : {}),
       });
     }
   } catch (error) {

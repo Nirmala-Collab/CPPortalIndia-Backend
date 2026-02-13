@@ -34,6 +34,8 @@ app.use(
       'http://10.10.2.9:5002',
       'http://10.10.2.9:5003',
       'http://10.10.10.4:5005',
+      'http://98.70.247.239:443',
+      'https://uatevolv.lockton-india.com',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-type', 'Authorization'],
@@ -43,7 +45,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 app.use('/api/auth', authRoutes);
