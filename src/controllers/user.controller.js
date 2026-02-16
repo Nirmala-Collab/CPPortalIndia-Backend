@@ -272,6 +272,7 @@ export async function getUsers(req, res) {
         { model: AuthenticationType, as: 'authType' },
         { model: AccessRight, as: 'accessRights' },
       ],
+      order: [['fullName', 'ASC']],
     });
 
     return res.status(200).json(users);

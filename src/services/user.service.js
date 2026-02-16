@@ -16,6 +16,7 @@ export async function fetchUserById(userId) {
       { model: AuthenticationType, as: 'authType' },
       { model: AccessRight, as: 'accessRights' },
     ],
+    order: [['fullName', 'ASC']],
   });
 }
 
@@ -30,5 +31,6 @@ export async function fetchUserByName(name) {
       deleted: false,
     },
     include: [{ model: Role, as: 'role' }],
+    order: [['fullName', 'ASC']],
   });
 }
