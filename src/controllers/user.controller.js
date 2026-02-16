@@ -51,7 +51,6 @@ export async function createUser(req, res) {
       });
     }
 
-    let reAssignGroupId = '50';
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
@@ -82,7 +81,6 @@ export async function createUser(req, res) {
           reassignCorporateGroup = null;
         }
 
-        reAssignGroupId = clientGroupId ? clientGroupId : null;
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
           return res.status(400).json({
             message: 'At least one company must be selected',
@@ -108,7 +106,7 @@ export async function createUser(req, res) {
       phone,
       userType,
       roleId,
-      clientGroupId: reAssignGroupId,
+      clientGroupId: clientGroupId || null,
       assignCorporateGroup: reassignCorporateGroup,
       relationshipManager: relationshipManager || null,
       claimsManager: claimsManager || null,
@@ -197,7 +195,6 @@ export async function updateUser(req, res) {
     if (email !== user.email) {
       return res.status(400).json({ message: 'Email cannot be changed' });
     }
-    let reAssignGroupId;
     let reassignCorporateGroup = assignCorporateGroup;
 
     if (user.userType === 'EXTERNAL') {
@@ -210,7 +207,6 @@ export async function updateUser(req, res) {
         reassignCorporateGroup = null;
       }
 
-      reAssignGroupId = clientGroupId ? clientGroupId : null;
       if (!Array.isArray(clientIds) || clientIds.length === 0) {
         return res.status(400).json({
           message: 'At least one company must be selected',
@@ -218,7 +214,6 @@ export async function updateUser(req, res) {
       }
     }
     if (user.userType === 'INTERNAL') {
-      reAssignGroupId = clientGroupId;
       reassignCorporateGroup = null;
     }
     // Update user
@@ -227,7 +222,7 @@ export async function updateUser(req, res) {
       phone,
       email,
       roleId,
-      clientGroupId: reAssignGroupId,
+      clientGroupId: clientGroupId || null,
       clientIds,
       relationshipManager: relationshipManager || null,
       claimsManager: claimsManager || null,
