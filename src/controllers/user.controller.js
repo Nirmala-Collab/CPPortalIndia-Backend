@@ -78,7 +78,7 @@ export async function createUser(req, res) {
           });
         }
         if (reassignCorporateGroup == '' || reassignCorporateGroup == 'NA') {
-          reassignCorporateGroup = null;
+          reassignCorporateGroup = false;
         }
 
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
@@ -203,8 +203,13 @@ export async function updateUser(req, res) {
           message: 'RM & CM required for external user',
         });
       }
-      if (assignCorporateGroup == '' || assignCorporateGroup == 'NA') {
-        reassignCorporateGroup = null;
+      console.log('assigngroup', assignCorporateGroup);
+      if (
+        assignCorporateGroup == '' ||
+        assignCorporateGroup == 'NA' ||
+        assignCorporateGroup == null
+      ) {
+        reassignCorporateGroup = false;
       }
 
       if (!Array.isArray(clientIds) || clientIds.length === 0) {
