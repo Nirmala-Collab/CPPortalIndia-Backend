@@ -428,12 +428,12 @@ export async function verifyOtp(req, res) {
     // -------------------------------
     // ✅ SUCCESS: Increment login count
     // -------------------------------
-    if (user.firstLogin === null) {
-      user.firstLogin = true;
-    } else {
-      user.firstLogin = false;
-    }
-    await user.save();
+    // if (user.firstLogin === null) {
+    //   user.firstLogin = true;
+    // } else {
+    //   user.firstLogin = false;
+    // }
+    // await user.save();
 
     // Mark OTP as used
     otpRecord.isUsed = true;
@@ -457,13 +457,14 @@ export async function verifyOtp(req, res) {
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
       user: userData,
-      firstLogin: user.firstLogin, // 👈 optional but useful for FE
+      policyAccepted: user.policyAccepted,
     });
   } catch (error) {
     console.error('Verify OTP Error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
 
 async function findActiveUser(where) {
   const user = await User.findOne({

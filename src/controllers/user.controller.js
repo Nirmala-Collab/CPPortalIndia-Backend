@@ -300,6 +300,23 @@ export async function getUserById(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+export async function userPolicyAcceptance(req, res) {
+  try {
+    const { id } = req.params;
+    const user = await fetchUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await User.update({
+      policyAccepted: true,
+    });
+    return res.status(200).json({ message: 'Policies are Accepted' });
+  } catch (error) {
+    console.error('Error updating policy acceptance:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
 export async function getUserByName(req, res) {
   try {
     const { name } = req.params;
