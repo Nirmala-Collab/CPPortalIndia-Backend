@@ -78,7 +78,7 @@ export async function createUser(req, res) {
           });
         }
         if (reassignCorporateGroup == '' || reassignCorporateGroup == 'NA') {
-          reassignCorporateGroup = null;
+          reassignCorporateGroup = false;
         }
 
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
@@ -203,8 +203,13 @@ export async function updateUser(req, res) {
           message: 'RM & CM required for external user',
         });
       }
-      if (assignCorporateGroup == '' || assignCorporateGroup == 'NA') {
-        reassignCorporateGroup = null;
+      console.log('assigngroup', assignCorporateGroup);
+      if (
+        assignCorporateGroup == '' ||
+        assignCorporateGroup == 'NA' ||
+        assignCorporateGroup == null
+      ) {
+        reassignCorporateGroup = false;
       }
 
       if (!Array.isArray(clientIds) || clientIds.length === 0) {
@@ -292,6 +297,23 @@ export async function getUserById(req, res) {
     return res.status(200).json({ user });
   } catch (error) {
     console.error('Get User Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function userPolicyAcceptance(req, res) {
+  try {
+    const { id } = req.params;
+    const user = await fetchUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await User.update({
+      policyAccepted: true,
+    });
+    return res.status(200).json({ message: 'Policies are Accepted' });
+  } catch (error) {
+    console.error('Error updating policy acceptance:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
