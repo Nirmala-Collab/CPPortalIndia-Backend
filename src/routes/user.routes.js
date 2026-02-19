@@ -10,7 +10,6 @@ import {
   getUserById,
   getUsersByRoles,
   getUserByName,
-  userPolicyAcceptance,
 } from '../controllers/user.controller.js';
 import { uploadProfile } from '../utils/uploadProfile.js';
 const router = express.Router();

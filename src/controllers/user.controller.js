@@ -308,9 +308,12 @@ export async function userPolicyAcceptance(req, res) {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    await User.update({
-      policyAccepted: true,
-    });
+    await User.update(
+      {
+        policyAccepted: true,
+      },
+      { where: { id: id } }
+    );
     return res.status(200).json({ message: 'Policies are Accepted' });
   } catch (error) {
     console.error('Error updating policy acceptance:', error);
