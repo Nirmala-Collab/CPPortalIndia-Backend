@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { uploadProfilePhoto } from '../controllers/user.controller.js';
+import { uploadProfilePhoto, userPolicyAcceptance } from '../controllers/user.controller.js';
 import {
   createUser,
   updateUser,
@@ -21,6 +21,7 @@ router.get('/user-by-role', getUsersByRoles);
 router.get('/userType/:usertype', getUsersByType);
 router.get('/name/:name', getUserByName);
 router.get('/:id', getUserById);
+router.post('/:id/accept-policies', userPolicyAcceptance);
 router.post('/:id/profile-photo', uploadProfile.single('profilePhoto'), uploadProfilePhoto);
 
 export default router;

@@ -80,10 +80,10 @@ const User = sequelize.define(
       allowNull: true,
       field: 'profile_photo',
     },
-    firstLogin: {
+    policyAccepted: {
       type: DataTypes.BOOLEAN,
-      defaultValue: null,
-      field: 'first_login',
+      defaultValue: false,
+      field: 'policy_accepted',
     },
   },
   {
