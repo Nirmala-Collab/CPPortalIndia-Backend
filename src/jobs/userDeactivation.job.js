@@ -21,7 +21,7 @@ export function scheduleUserDeactivationJob() {
           {
             where: {
               endDate: {
-                [Op.lte]: today,
+                [Op.lt]: today,
               },
               isActive: true,
               deleted: false,
