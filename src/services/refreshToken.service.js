@@ -5,16 +5,16 @@ const { RefreshToken } = db;
 import { Op } from 'sequelize';
 const REFRESH_EXPIRY_DAYS = 30;
 
-export async function userHasActiveRefreshToken(userId) {
-  const now = new Date();
-  const existing = await RefreshToken.findOne({
-    where: {
-      userId,
-      expiresAt: { [Op.gt]: now },
-    },
-  });
-  return !!existing;
-}
+// export async function userHasActiveRefreshToken(userId) {
+//   const now = new Date();
+//   const existing = await RefreshToken.findOne({
+//     where: {
+//       userId,
+//       expiresAt: { [Op.gt]: now },
+//     },
+//   });
+//   return !!existing;
+// }
 
 export async function createRefreshToken(userId) {
   const token = crypto.randomBytes(40).toString('hex');

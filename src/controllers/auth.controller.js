@@ -3,7 +3,11 @@ import { authenticateWithAD } from '../services/adAuthentication.service.js';
 import { generateJwtToken } from '../services/jwt.service.js';
 import { createEmailOtpForUser } from '../services/otp.service.js';
 import { sendOtpEmail } from '../services/otp.service.js';
-import { createRefreshToken, invalidateRefreshToken,userHasActiveRefreshToken} from '../services/refreshToken.service.js';
+import {
+  createRefreshToken,
+  invalidateRefreshToken,
+  userHasActiveRefreshToken,
+} from '../services/refreshToken.service.js';
 import { fetchUserById } from '../services/user.service.js';
 import { logAudit } from '../utils/auditLogger.js';
 
@@ -120,21 +124,21 @@ export async function login(req, res) {
         });
       }
 
-      
-const alreadyActive = await userHasActiveRefreshToken(user.id);
-if (alreadyActive) {
-  await logAudit({
-    user,
-    action: 'LOGIN',
-    status: 'FAILED',
-    reason: 'User already active on another device/browser',
-    failure_code: 'LOGIN_ACTIVE_409',
-    req,
-  });
-  return res.status(409).json({
-    message: 'You are already logged in on another device or browser. Please logout there first.',
-  });
-}
+      // const alreadyActive = await userHasActiveRefreshToken(user.id);
+      // if (alreadyActive) {
+      //   await logAudit({
+      //     user,
+      //     action: 'LOGIN',
+      //     status: 'FAILED',
+      //     reason: 'User already active on another device/browser',
+      //     failure_code: 'LOGIN_ACTIVE_409',
+      //     req,
+      //   });
+      //   return res.status(409).json({
+      //     message:
+      //       'You are already logged in on another device or browser. Please logout there first.',
+      //   });
+      // //
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
@@ -455,22 +459,22 @@ export async function verifyOtp(req, res) {
     otpRecord.isUsed = true;
     await otpRecord.save();
 
-    
-// After OTP verified successfully:
-const alreadyActive = await userHasActiveRefreshToken(user.id);
-if (alreadyActive) {
-  await logAudit({
-    user,
-    action: 'VERIFY_OTP',
-    status: 'FAILED',
-    reason: 'User already active on another device/browser',
-    failure_code: 'OTP_ACTIVE_409',
-    req,
-  });
-  return res.status(409).json({
-    message: 'You are already logged in on another device or browser. Please logout there first.',
-  });
-}
+    // After OTP verified successfully:
+    // const alreadyActive = await userHasActiveRefreshToken(user.id);
+    // if (alreadyActive) {
+    //   await logAudit({
+    //     user,
+    //     action: 'VERIFY_OTP',
+    //     status: 'FAILED',
+    //     reason: 'User already active on another device/browser',
+    //     failure_code: 'OTP_ACTIVE_409',
+    //     req,
+    //   });
+    //   return res.status(409).json({
+    //     message:
+    //       'You are already logged in on another device or browser. Please logout there first.',
+    //   });
+    // }
 
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
@@ -497,7 +501,6 @@ if (alreadyActive) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
-
 
 async function findActiveUser(where) {
   const user = await User.findOne({
