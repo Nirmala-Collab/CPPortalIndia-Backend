@@ -1,8 +1,8 @@
 // services/refreshToken.service.js
 import crypto from 'crypto';
 import db from '../models/index.js';
-const { RefreshToken, Sequelize } = db;
-const { Op } = Sequelize;
+const { RefreshToken } = db;
+import { Op } from 'sequelize';
 const REFRESH_EXPIRY_DAYS = 30;
 
 export async function userHasActiveRefreshToken(userId) {
