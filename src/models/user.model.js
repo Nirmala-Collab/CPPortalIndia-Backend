@@ -69,12 +69,6 @@ const User = sequelize.define(
       defaultValue: false,
       field: 'deleted',
     },
-    assignCorporateGroup: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: null,
-      field: 'assign_corporate_group',
-    },
     profilePhoto: {
       type: DataTypes.STRING,
       allowNull: true,
