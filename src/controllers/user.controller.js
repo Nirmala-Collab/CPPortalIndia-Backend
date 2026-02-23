@@ -25,7 +25,6 @@ export async function createUser(req, res) {
       relationshipManager,
       claimsManager,
       endDate,
-      assignCorporateGroup,
       authTypeId,
       accessRights,
       isActive,
@@ -65,10 +64,9 @@ export async function createUser(req, res) {
     const internalDomains = ['lockton.com'];
     const allowedExternalTlds = ['.com'];
     let userType = 'EXTERNAL';
-    let reassignCorporateGroup = assignCorporateGroup;
+
     if (internalDomains.includes(emailDomain.toLowerCase())) {
       userType = 'INTERNAL';
-      reassignCorporateGroup = null;
     } else {
       const validExternal = allowedExternalTlds.some((tld) => emailDomain.endsWith(tld));
       if (userType === 'EXTERNAL') {
@@ -76,9 +74,6 @@ export async function createUser(req, res) {
           return res.status(400).json({
             message: 'RM & CM required for external user',
           });
-        }
-        if (reassignCorporateGroup == '' || reassignCorporateGroup == 'NA') {
-          reassignCorporateGroup = false;
         }
 
         if (!Array.isArray(clientIds) || clientIds.length === 0) {
@@ -107,7 +102,6 @@ export async function createUser(req, res) {
       userType,
       roleId,
       clientGroupId: clientGroupId || null,
-      assignCorporateGroup: reassignCorporateGroup,
       relationshipManager: relationshipManager || null,
       claimsManager: claimsManager || null,
       endDate: endDate || null,
@@ -160,7 +154,6 @@ export async function updateUser(req, res) {
       clientIds,
       relationshipManager,
       claimsManager,
-      assignCorporateGroup,
       endDate,
       authTypeId,
       accessRights,
@@ -195,21 +188,12 @@ export async function updateUser(req, res) {
     if (email !== user.email) {
       return res.status(400).json({ message: 'Email cannot be changed' });
     }
-    let reassignCorporateGroup = assignCorporateGroup;
 
     if (user.userType === 'EXTERNAL') {
       if (!relationshipManager || !claimsManager) {
         return res.status(400).json({
           message: 'RM & CM required for external user',
         });
-      }
-      console.log('assigngroup', assignCorporateGroup);
-      if (
-        assignCorporateGroup == '' ||
-        assignCorporateGroup == 'NA' ||
-        assignCorporateGroup == null
-      ) {
-        reassignCorporateGroup = false;
       }
 
       if (!Array.isArray(clientIds) || clientIds.length === 0) {
@@ -218,9 +202,7 @@ export async function updateUser(req, res) {
         });
       }
     }
-    if (user.userType === 'INTERNAL') {
-      reassignCorporateGroup = null;
-    }
+
     // Update user
     await user.update({
       fullName,
@@ -231,7 +213,6 @@ export async function updateUser(req, res) {
       clientIds,
       relationshipManager: relationshipManager || null,
       claimsManager: claimsManager || null,
-      assignCorporateGroup: reassignCorporateGroup,
       endDate: endDate || null,
       isActive,
       deleted,
