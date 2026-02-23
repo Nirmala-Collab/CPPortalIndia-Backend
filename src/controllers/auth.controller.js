@@ -3,11 +3,7 @@ import { authenticateWithAD } from '../services/adAuthentication.service.js';
 import { generateJwtToken } from '../services/jwt.service.js';
 import { createEmailOtpForUser } from '../services/otp.service.js';
 import { sendOtpEmail } from '../services/otp.service.js';
-import {
-  createRefreshToken,
-  invalidateRefreshToken,
-  userHasActiveRefreshToken,
-} from '../services/refreshToken.service.js';
+import { createRefreshToken, invalidateRefreshToken } from '../services/refreshToken.service.js';
 import { fetchUserById } from '../services/user.service.js';
 import { logAudit } from '../utils/auditLogger.js';
 
