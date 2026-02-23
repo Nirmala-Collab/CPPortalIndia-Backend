@@ -3,7 +3,7 @@ import { authenticateWithAD } from '../services/adAuthentication.service.js';
 import { generateJwtToken } from '../services/jwt.service.js';
 import { createEmailOtpForUser } from '../services/otp.service.js';
 import { sendOtpEmail } from '../services/otp.service.js';
-import { createRefreshToken, invalidateRefreshToken } from '../services/refreshToken.service.js';
+import { createRefreshToken, invalidateRefreshToken,userHasActiveRefreshToken} from '../services/refreshToken.service.js';
 import { fetchUserById } from '../services/user.service.js';
 import { logAudit } from '../utils/auditLogger.js';
 
@@ -119,6 +119,22 @@ export async function login(req, res) {
           message: adResponse.data?.message || 'Unauthorized',
         });
       }
+
+      
+const alreadyActive = await userHasActiveRefreshToken(user.id);
+if (alreadyActive) {
+  await logAudit({
+    user,
+    action: 'LOGIN',
+    status: 'FAILED',
+    reason: 'User already active on another device/browser',
+    failure_code: 'LOGIN_ACTIVE_409',
+    req,
+  });
+  return res.status(409).json({
+    message: 'You are already logged in on another device or browser. Please logout there first.',
+  });
+}
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
@@ -438,6 +454,23 @@ export async function verifyOtp(req, res) {
     // Mark OTP as used
     otpRecord.isUsed = true;
     await otpRecord.save();
+
+    
+// After OTP verified successfully:
+const alreadyActive = await userHasActiveRefreshToken(user.id);
+if (alreadyActive) {
+  await logAudit({
+    user,
+    action: 'VERIFY_OTP',
+    status: 'FAILED',
+    reason: 'User already active on another device/browser',
+    failure_code: 'OTP_ACTIVE_409',
+    req,
+  });
+  return res.status(409).json({
+    message: 'You are already logged in on another device or browser. Please logout there first.',
+  });
+}
 
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
