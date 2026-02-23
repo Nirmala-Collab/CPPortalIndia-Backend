@@ -528,3 +528,21 @@ async function findActiveUser(where) {
 function isAuthType(user, typeName) {
   return user?.authType?.name?.toLowerCase() === typeName.toLowerCase();
 }
+
+export async function logout(req, res) {
+  try {
+    const { refreshToken } = req.body || {};
+    if (refreshToken) {
+      await invalidateRefreshToken(refreshToken);
+      return res.status(200).json({ message: 'Logged out' });
+    }
+    // If you use auth middleware that provides req.userId
+    if (req.userId) {
+      await invalidateAllUserRefreshTokens(req.userId);
+    }
+    return res.status(200).json({ message: 'Logged out' });
+  } catch (e) {
+    console.error('Logout error', e);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
