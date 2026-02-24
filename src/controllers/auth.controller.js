@@ -119,6 +119,22 @@ export async function login(req, res) {
           message: adResponse.data?.message || 'Unauthorized',
         });
       }
+
+      // const alreadyActive = await userHasActiveRefreshToken(user.id);
+      // if (alreadyActive) {
+      //   await logAudit({
+      //     user,
+      //     action: 'LOGIN',
+      //     status: 'FAILED',
+      //     reason: 'User already active on another device/browser',
+      //     failure_code: 'LOGIN_ACTIVE_409',
+      //     req,
+      //   });
+      //   return res.status(409).json({
+      //     message:
+      //       'You are already logged in on another device or browser. Please logout there first.',
+      //   });
+      // //
       // Success -> issue tokens
       const jwtToken = generateJwtToken({ userId: user.id });
       const refreshTokenObj = await createRefreshToken(user.id);
@@ -438,6 +454,23 @@ export async function verifyOtp(req, res) {
     otpRecord.isUsed = true;
     await otpRecord.save();
 
+    // After OTP verified successfully:
+    // const alreadyActive = await userHasActiveRefreshToken(user.id);
+    // if (alreadyActive) {
+    //   await logAudit({
+    //     user,
+    //     action: 'VERIFY_OTP',
+    //     status: 'FAILED',
+    //     reason: 'User already active on another device/browser',
+    //     failure_code: 'OTP_ACTIVE_409',
+    //     req,
+    //   });
+    //   return res.status(409).json({
+    //     message:
+    //       'You are already logged in on another device or browser. Please logout there first.',
+    //   });
+    // }
+
     // Issue tokens
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
@@ -463,7 +496,6 @@ export async function verifyOtp(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
-
 
 async function findActiveUser(where) {
   const user = await User.findOne({
@@ -493,4 +525,22 @@ async function findActiveUser(where) {
 
 function isAuthType(user, typeName) {
   return user?.authType?.name?.toLowerCase() === typeName.toLowerCase();
+}
+
+export async function logout(req, res) {
+  try {
+    const { refreshToken } = req.body || {};
+    if (refreshToken) {
+      await invalidateRefreshToken(refreshToken);
+      return res.status(200).json({ message: 'Logged out' });
+    }
+    // If you use auth middleware that provides req.userId
+    if (req.userId) {
+      await invalidateAllUserRefreshTokens(req.userId);
+    }
+    return res.status(200).json({ message: 'Logged out' });
+  } catch (e) {
+    console.error('Logout error', e);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }

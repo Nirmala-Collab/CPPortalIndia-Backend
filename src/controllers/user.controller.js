@@ -6,7 +6,9 @@ import { Op } from 'sequelize';
 import db from '../models/index.js';
 import { sendEmail } from '../services/email.service.js';
 import { fetchUserById, fetchUserByName } from '../services/user.service.js';
-import { userCreated } from '../utils/mailContent.js';
+import { userCreatedOtp, userCreatedAD } from '../utils/mailContent.js';
+import { createConnection } from 'net';
+import { createEmailOtpForUser } from '../services/otp.service.js';
 const { User, Role, Corporate, Company, AuthenticationType, AccessRight } = db;
 /**
  * ----------------------------------------------------
@@ -113,11 +115,12 @@ export async function createUser(req, res) {
     await user.setAccessRights(accessRights);
     await user.setCompanies(clientIds);
     const toEmail = email.toLowerCase();
+    const creationEmail = user.userType === 'INTERNAL' ? userCreatedAD : userCreatedOtp;
     if (toEmail) {
       sendEmail({
         to: toEmail,
-        subject: userCreated.subject,
-        html: userCreated.body({
+        subject: creationEmail.subject,
+        html: creationEmail.body({
           fullName,
           username: toEmail,
           portalUrl: process.env.PORTAL_URL,
