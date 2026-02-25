@@ -8,7 +8,6 @@ export async function sendEmail({ to, cc = [], subject, html }) {
       subject,
       html,
     });
-    console.log('Email sent: ', info.response);
     return info;
   } catch (error) {
     console.error('Email send failed:', error.message);

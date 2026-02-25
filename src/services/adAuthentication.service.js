@@ -2,7 +2,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 
 import { generateAccessToken } from './pasToken.service.js';
-dotenv.config({ path: '.env.uat' });
+dotenv.config({ path: '.env' });
 export async function authenticateWithAD(email, password) {
   try {
     const token = await generateAccessToken();
@@ -25,7 +25,6 @@ export async function authenticateWithAD(email, password) {
     return response;
   } catch (error) {
     console.log('AD Authentication Error:', error.response);
-    console.log('AD Authentication Error Data:', error.response.data);
     return error.response;
   }
 }

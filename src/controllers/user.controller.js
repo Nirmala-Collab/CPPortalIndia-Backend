@@ -93,7 +93,7 @@ export async function createUser(req, res) {
     /* -------------------- DUPLICATE CHECKS -------------------- */
     const existingEmail = await User.findOne({ where: { email } });
     if (existingEmail) {
-      return res.status(400).json({ message: 'Email already exists' });
+      return res.status(200).json({ message: 'Email already exists' });
     }
 
     /* -------------------- CREATE USER -------------------- */
@@ -177,7 +177,6 @@ export async function updateUser(req, res) {
       });
     }
 
-    console.log('Client GroupId......:', req.body, phone);
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
