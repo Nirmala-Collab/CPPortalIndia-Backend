@@ -1,7 +1,8 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/db.js";
+import { DataTypes } from 'sequelize';
+
+import sequelize from '../config/db.js';
 const AccessRight = sequelize.define(
-  "AccessRight",
+  'AccessRight',
   {
     id: {
       type: DataTypes.UUID,
@@ -12,19 +13,22 @@ const AccessRight = sequelize.define(
       type: DataTypes.STRING(200),
       allowNull: false,
       unique: true,
-      field: "right_name",
+      field: 'right_name',
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    code: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   },
   {
-    tableName: "access_rights",
+    tableName: 'access_rights',
     underscored: true,
     timestamps: true,
   }
 );
 
 export default AccessRight;
- 

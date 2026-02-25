@@ -1,291 +1,455 @@
-import db from "../models/index.js";
-const {
- User,
- Role,
- Corporate,
- Company,
- AuthenticationType,
- AccessRight,
-} = db;
+import fs from 'fs';
+import path from 'path';
+
+import { Op } from 'sequelize';
+
+import db from '../models/index.js';
+import { sendEmail } from '../services/email.service.js';
+import { fetchUserById, fetchUserByName } from '../services/user.service.js';
+import { userCreatedOtp, userCreatedAD } from '../utils/mailContent.js';
+import { createConnection } from 'net';
+import { createEmailOtpForUser } from '../services/otp.service.js';
+const { User, Role, Corporate, Company, AuthenticationType, AccessRight } = db;
 /**
-* ----------------------------------------------------
-* CREATE USER
-* ----------------------------------------------------
-*/
+ * ----------------------------------------------------
+ * CREATE USER
+ * ----------------------------------------------------
+ */
 export async function createUser(req, res) {
- try {
-   const {
-     fullName,
-     email,
-     phone,
-     roleId,
-     corporateId,
-     companyId,
-     relationshipManager,
-     claimsManager,
-     endDate,
-     authTypeId,
-     accessRights,
-     isActive,
-   } = req.body;
-   /* -------------------- BASIC REQUIRED VALIDATION -------------------- */
-   if (
-     !fullName ||
-     !email ||
-     !phone ||
-     !roleId ||
-     !corporateId ||
-     !companyId ||
-     !relationshipManager ||
-     !claimsManager ||
-     !endDate ||
-     !authTypeId ||
-     isActive === undefined
-   ) {
-     return res.status(400).json({
-       message: "All fields are mandatory for create user",
-     });
-   }
-   if (!Array.isArray(accessRights) || accessRights.length === 0) {
-     return res.status(400).json({
-       message: "At least one access right must be selected",
-     });
-   }
-   /* -------------------- PHONE VALIDATION -------------------- */
-   if (!/^\d{10}$/.test(phone)) {
-     return res.status(400).json({
-       message: "Phone number must be exactly 10 digits",
-     });
-   }
-   /* -------------------- EMAIL VALIDATION -------------------- */
-   const emailLower = email.toLowerCase();
-   // Block personal emails
-  //  const blockedDomains = [
-  //    "gmail.com",
-  //    "yahoo.com",
-  //    "outlook.com",
-  //    "hotmail.com",
-  //  ];
-   const emailDomain = emailLower.split("@")[1];
-   if (!emailDomain) {
-     return res.status(400).json({ message: "Invalid email format" });
-   }
-  //  if (blockedDomains.includes(emailDomain)) {
-  //    return res.status(400).json({
-  //      message: "Personal email IDs are not allowed",
-  //    });
-  //  }
-   // Internal Lockton domains
-   const internalDomains = [
-     "lockton.com",
-   ];
-   // External allowed TLDs
-   const allowedExternalTlds = [".com", ".co.in", ".in"];
-   let userType = "EXTERNAL";
-   if (internalDomains.includes(emailDomain)) {
-     userType = "INTERNAL";
-   } else {
-     const validExternal = allowedExternalTlds.some((tld) =>
-       emailDomain.endsWith(tld)
-     );
-     if (!validExternal) {
-       return res.status(400).json({
-         message:
-           "Invalid corporate email domain. Only .com, .co.in, .in allowed",
-       });
-     }
-   }
-   /* -------------------- DUPLICATE CHECKS -------------------- */
-   const existingEmail = await User.findOne({ where: { email } });
-   if (existingEmail) {
-     return res.status(400).json({ message: "Email already exists" });
-   }
-   const existingPhone = await User.findOne({ where: { phone } });
-   if (existingPhone) {
-     return res.status(400).json({ message: "Phone number already exists" });
-   }
-   /* -------------------- CREATE USER -------------------- */
-   const user = await User.create({
-     fullName,
-     email,
-     phone,
-     userType,
-     roleId,
-     corporateId,
-     companyId,
-     relationshipManager,
-     claimsManager,
-     endDate,
-     isActive,
-     authTypeId,
-   });
-   /* -------------------- ASSIGN ACCESS RIGHTS -------------------- */
-   await user.setAccessRights(accessRights);
-   return res.status(201).json({
-     message: "User created successfully",
-     user,
-   });
- } catch (error) {
-   console.error("Create User Error:", error);
-   return res.status(500).json({
-     message: "Internal server error",
-   });
- }
+  try {
+    const {
+      fullName,
+      email,
+      phone,
+      roleId,
+      clientGroupId,
+      clientIds,
+      relationshipManager,
+      claimsManager,
+      endDate,
+      authTypeId,
+      accessRights,
+      isActive,
+      deleted = false,
+    } = req.body;
+    /* -------------------- BASIC REQUIRED VALIDATION -------------------- */
+    if (
+      !fullName ||
+      !email ||
+      !phone ||
+      !roleId ||
+      !authTypeId ||
+      isActive === undefined ||
+      deleted === undefined
+    ) {
+      return res.status(400).json({
+        message: 'Please fill the mandatory fields for creating a user',
+        fullName,
+        email,
+        phone,
+        roleId,
+        authTypeId,
+      });
+    }
+
+    if (!Array.isArray(accessRights) || accessRights.length === 0) {
+      return res.status(400).json({
+        message: 'At least one access right must be selected',
+      });
+    }
+    /* -------------------- EMAIL VALIDATION -------------------- */
+    const emailLower = email.toLowerCase();
+    const emailDomain = emailLower.split('@')[1];
+    if (!emailDomain) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+    const internalDomains = ['lockton.com'];
+    const allowedExternalTlds = ['.com'];
+    let userType = 'EXTERNAL';
+
+    if (internalDomains.includes(emailDomain.toLowerCase())) {
+      userType = 'INTERNAL';
+    } else {
+      const validExternal = allowedExternalTlds.some((tld) => emailDomain.endsWith(tld));
+      if (userType === 'EXTERNAL') {
+        if (!relationshipManager || !claimsManager) {
+          return res.status(400).json({
+            message: 'RM & CM required for external user',
+          });
+        }
+
+        if (!Array.isArray(clientIds) || clientIds.length === 0) {
+          return res.status(400).json({
+            message: 'At least one company must be selected',
+          });
+        }
+      }
+      if (!validExternal) {
+        return res.status(400).json({
+          message: 'Invalid corporate email domain. Only .com allowed',
+        });
+      }
+    }
+    /* -------------------- DUPLICATE CHECKS -------------------- */
+    const existingEmail = await User.findOne({ where: { email } });
+    if (existingEmail) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    /* -------------------- CREATE USER -------------------- */
+    const user = await User.create({
+      fullName,
+      email,
+      phone,
+      userType,
+      roleId,
+      clientGroupId: clientGroupId || null,
+      relationshipManager: relationshipManager || null,
+      claimsManager: claimsManager || null,
+      endDate: endDate || null,
+      isActive,
+      deleted,
+      authTypeId,
+    });
+    /* -------------------- ASSIGN ACCESS RIGHTS -------------------- */
+    await user.setAccessRights(accessRights);
+    await user.setCompanies(clientIds);
+    const toEmail = email.toLowerCase();
+    const creationEmail = user.userType === 'INTERNAL' ? userCreatedAD : userCreatedOtp;
+    if (toEmail) {
+      sendEmail({
+        to: toEmail,
+        subject: creationEmail.subject,
+        html: creationEmail.body({
+          fullName,
+          username: toEmail,
+          portalUrl: process.env.PORTAL_URL,
+          supportEmail: process.env.SUPPORT_EMAIL,
+        }),
+      })
+        .then(() => console.log(`User created email sent to ${toEmail}`))
+        .catch((err) => console.warn('Failed to send user created email:', err?.message || err));
+    }
+    return res.status(201).json({
+      message: 'User created successfully',
+    });
+  } catch (error) {
+    console.error('Create User Error:', error);
+    return res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
 }
 /**
-* ----------------------------------------------------
-* UPDATE USER (ALL FIELDS REQUIRED)
-* ----------------------------------------------------
-*/
+ * ----------------------------------------------------
+ * UPDATE USER (ALL FIELDS REQUIRED)
+ * ----------------------------------------------------
+ */
 export async function updateUser(req, res) {
- try {
-   const  userId  = req.params.id;
-   const {
-     fullName,
-     phone,
-     roleId,
-     corporateId,
-     companyId,
-     relationshipManager,
-     claimsManager,
-     endDate,
-     authTypeId,
-     accessRights,
-     isActive,
-   } = req.body;
-   // Mandatory validation
-   if (
-     !fullName ||
-     !phone ||
-     !roleId ||
-     !corporateId ||
-     !companyId ||
-     !relationshipManager ||
-     !claimsManager ||
-     !endDate ||
-     !authTypeId ||
-     isActive === undefined
-   ) {
-     return res.status(400).json({
-       message: "All fields are mandatory for update",
-     });
-   }
-   if (!accessRights || accessRights.length === 0) {
-     return res
-       .status(400)
-       .json({ message: "At least one access right must be selected" });
-   }
-   const user = await User.findByPk(userId);
-   if (!user) {
-     return res.status(404).json({ message: "User not found" });
-   }
-   // Check duplicate phone
-   const phoneExists = await User.findOne({
-     where: { phone },
-   });
-   if (phoneExists && phoneExists.id !== user.id) {
-     return res.status(400).json({ message: "Phone number already exists" });
-   }
-   // Validate auth type
-  //  const authTypeRecord = await AuthenticationType.findOne({
-  //    where: { name: authType },
-  //  });
-  //  if (!authTypeRecord) {
-  //    return res.status(400).json({
-  //      message: "Invalid authType. Allowed values are email, phone, ad",
-  //    });
-  //  }
-   // Update user
-   await user.update({
-     fullName,
-     phone,
-     roleId,
-     corporateId,
-     companyId,
-     relationshipManager,
-     claimsManager,
-     endDate,
-     isActive,
-     authTypeId
-   });
-   // Update access rights
-   await user.setAccessRights(accessRights);
-   return res.status(200).json({
-     message: "User updated successfully",
-     user,
-   });
- } catch (error) {
-   console.error("Update User Error:", error);
-   return res.status(500).json({ message: "Internal server error" });
- }
+  try {
+    const userId = req.params.id;
+    const {
+      fullName,
+      email,
+      phone,
+      roleId,
+      clientGroupId,
+      clientIds,
+      relationshipManager,
+      claimsManager,
+      endDate,
+      authTypeId,
+      accessRights,
+      isActive,
+      deleted = false,
+    } = req.body;
+    // Mandatory validation
+    if (
+      !fullName ||
+      !phone ||
+      !roleId ||
+      !authTypeId ||
+      isActive === undefined ||
+      deleted === undefined
+    ) {
+      return res.status(400).json({
+        message: 'All fields are mandatory for update',
+      });
+    }
+
+    console.log('Client GroupId......:', req.body, phone);
+    if (!Array.isArray(accessRights) || accessRights.length === 0) {
+      return res.status(400).json({
+        message: 'At least one access right must be selected',
+      });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (email !== user.email) {
+      return res.status(400).json({ message: 'Email cannot be changed' });
+    }
+
+    if (user.userType === 'EXTERNAL') {
+      if (!relationshipManager || !claimsManager) {
+        return res.status(400).json({
+          message: 'RM & CM required for external user',
+        });
+      }
+
+      if (!Array.isArray(clientIds) || clientIds.length === 0) {
+        return res.status(400).json({
+          message: 'At least one company must be selected',
+        });
+      }
+    }
+
+    // Update user
+    await user.update({
+      fullName,
+      phone,
+      email,
+      roleId,
+      clientGroupId: clientGroupId || null,
+      clientIds,
+      relationshipManager: relationshipManager || null,
+      claimsManager: claimsManager || null,
+      endDate: endDate || null,
+      isActive,
+      deleted,
+      authTypeId,
+    });
+    // Update access rights
+    await user.setAccessRights(accessRights);
+    await user.setCompanies(clientIds);
+    return res.status(200).json({
+      message: 'User updated successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('Update User Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }
 /**
-* ----------------------------------------------------
-* GET ALL USERS (RETURN EVERYTHING)
-* ----------------------------------------------------
-*/
+ * ----------------------------------------------------
+ * GET ALL USERS (RETURN EVERYTHING)
+ * ----------------------------------------------------
+ */
+
 export async function getUsers(req, res) {
- try {
-   const users = await User.findAll({
-     include: [
-       { model: Role, as: "role" },
-       { model: Corporate, as: "corporate" },
-       { model: Company, as: "company" },
-       { model: AuthenticationType, as: "authType" },
-       { model: AccessRight, as: "accessRights" },
-     ],
-    
-   });
-   return res.status(200).json(users);
- } catch (error) {
-   console.error("Get Users Error:", error);
-   return res.status(500).json({ message: "Internal server error" });
- }
+  try {
+    const { loggedInUser } = req.query; // or req.query
+    const users = await User.findAll({
+      where: {
+        deleted: false,
+        ...(loggedInUser && {
+          id: { [Op.ne]: loggedInUser },
+        }),
+      },
+      include: [
+        { model: Role, as: 'role' },
+        { model: Corporate, as: 'corporate' },
+        { model: Company, as: 'companies' },
+        { model: AuthenticationType, as: 'authType' },
+        { model: AccessRight, as: 'accessRights' },
+      ],
+      order: [['fullName', 'ASC']],
+    });
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Get Users Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }
+
 /**
-* ----------------------------------------------------
-* GET SINGLE USER
-* ----------------------------------------------------
-*/
+ * ----------------------------------------------------
+ * GET SINGLE USER
+ * ----------------------------------------------------
+ */
 export async function getUserById(req, res) {
- try {
-   const userId  = req.params.id;
-   const user = await User.findByPk(userId, {
-     include: [
-       { model: Role, as: "role" },
-       { model: Corporate, as: "corporate" },
-       { model: Company, as: "company" },
-       { model: AuthenticationType, as: "authType" },
-       { model: AccessRight, as: "accessRights" },
-     ],
-   });
-   if (!user) {
-     return res.status(404).json({ message: "User not found" });
-   }
-   return res.status(200).json({ user });
- } catch (error) {
-   console.error("Get User Error:", error);
-   return res.status(500).json({ message: "Internal server error" });
- }
+  try {
+    const { id } = req.params;
+    const user = await fetchUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error('Get User Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function userPolicyAcceptance(req, res) {
+  try {
+    const { id } = req.params;
+    const user = await fetchUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await User.update(
+      {
+        policyAccepted: true,
+      },
+      { where: { id: id } }
+    );
+    return res.status(200).json({ message: 'Policies are Accepted' });
+  } catch (error) {
+    console.error('Error updating policy acceptance:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+export async function getUserByName(req, res) {
+  try {
+    const { name } = req.params;
+    const user = await fetchUserByName(name);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error('Get User By Name Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function getUsersByType(req, res) {
+  try {
+    const { usertype } = req.params;
+    if (!usertype) {
+      return res.status(400).json({
+        message: 'usertype param is required (internal|external)',
+      });
+    }
+    const type = usertype.toString().trim().toUpperCase();
+    if (!['INTERNAL', 'EXTERNAL'].includes(type)) {
+      return res.status(400).json({
+        message: 'Invalid usertype. Allowed values: internal, external',
+      });
+    }
+
+    const users = await User.findAll({
+      where: {
+        userType: type,
+        isActive: true,
+        deleted: false,
+      },
+      attributes: ['fullName'],
+      order: [['fullName', 'ASC']],
+    });
+
+    const names = users.map((u) => u.fullName);
+    return res.status(200).json(names);
+  } catch (error) {
+    console.error('Get Users By Type Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function getUsersByRoles(req, res) {
+  try {
+    const { roles } = req.query;
+    if (!roles) {
+      return res.status(400).json({
+        message: 'roles query param is required (e.g. roles=RM,CM)',
+      });
+    }
+    const roleList = roles.split(',').map((r) => r.trim().toUpperCase());
+    const users = await User.findAll({
+      attributes: ['fullName'],
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          required: true,
+          where: {
+            roleName: {
+              [Op.in]: roleList,
+            },
+          },
+          attributes: ['roleName'],
+        },
+      ],
+    });
+    const grouped = {};
+    roleList.forEach((role) => {
+      grouped[role] = [];
+    });
+    users.forEach((user) => {
+      const roleName = user.role.roleName;
+      grouped[roleName].push(user.fullName);
+    });
+    return res.status(200).json(grouped);
+  } catch (error) {
+    console.error('Get Users By Roles Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export async function uploadProfilePhoto(req, res) {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: 'No file uploaded. Use form field name "profilePhoto".' });
+    }
+
+    // delete previous file if stored on disk
+    if (user.profilePhoto) {
+      try {
+        const prevRelative = user.profilePhoto.replace(/^\//, ''); // remove leading slash
+        const prevPath = path.join(process.cwd(), prevRelative);
+        if (fs.existsSync(prevPath)) {
+          fs.unlinkSync(prevPath);
+        }
+      } catch (err) {
+        console.warn('Failed to delete previous profile photo:', err.message);
+      }
+    }
+
+    const photoPath = `/uploads/profile-photos/${req.file.filename}`;
+
+    await user.update({ profilePhoto: photoPath });
+
+    return res.status(200).json({
+      message: 'Profile photo uploaded successfully',
+      profilePhoto: photoPath,
+    });
+  } catch (error) {
+    console.error('Profile Photo Upload Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }
 /**
-* ----------------------------------------------------
-* DELETE USER (SOFT DELETE)
-* ----------------------------------------------------
-*/
+ * ----------------------------------------------------
+ * DELETE USER (SOFT DELETE)
+ * ----------------------------------------------------
+ */
 export async function deleteUser(req, res) {
- try {
-   const userId  = req.params.id;
-   const user = await User.findByPk(userId);
-   if (!user) {
-     return res.status(404).json({ message: "User not found" });
-   }
-   await user.update({ isActive: false });
-   return res.status(200).json({
-     message: "User deactivated successfully",
-   });
- } catch (error) {
-   console.error("Delete User Error:", error);
-   return res.status(500).json({ message: "Internal server error" });
- }
+  try {
+    const userId = req.params.id;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await user.update({ deleted: true });
+    return res.status(200).json({
+      message: 'User deactivated successfully',
+    });
+  } catch (error) {
+    console.error('Delete User Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }
