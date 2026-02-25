@@ -1,194 +1,164 @@
-import sequelize from "../config/db.js";
+import sequelize from '../config/db.js';
 
-// MODELS
-
-import User from "./user.model.js";
-
-import Otp from "./otp.model.js";
-
-import AuthenticationType from "./authenticationType.model.js";
-
-import Role from "./role.model.js";
-
-import Corporate from "./corporate.model.js";
-
-import Company from "./company.model.js";
-
-import RefreshToken from "./refreshToken.model.js";
-
-import AccessRight from "./accessRight.model.js";
-
-import UserAccessRight from "./userAccessRight.model.js";
+import AccessRight from './accessRight.model.js';
+import AuditLog from './auditLog.model.js';
+import AuthenticationType from './authenticationType.model.js';
+import Company from './company.model.js';
+import Corporate from './corporate.model.js';
+import Otp from './otp.model.js';
+import RefreshToken from './refreshToken.model.js';
+import Role from './role.model.js';
+import RoleAccessRight from './roleAccessRight.model.js';
+import User from './user.model.js';
+import UserAccessRight from './userAccessRight.model.js';
+import UserCompany from './userCompany.model.js';
 
 /* =====================================================
-
    ASSOCIATIONS
-
 ===================================================== */
 
 /* 1. USER ↔ REFRESH TOKEN (One-to-Many) */
 
 User.hasMany(RefreshToken, {
-
-  foreignKey: "user_id",
-
-  as: "refreshTokens",
-
+  foreignKey: 'user_id',
+  as: 'refreshTokens',
 });
 
 RefreshToken.belongsTo(User, {
-
-  foreignKey: "user_id",
-
-  as: "user",
-
+  foreignKey: 'user_id',
+  as: 'user',
 });
 
 /* 2. USER ↔ OTP (One-to-Many) */
 
 User.hasMany(Otp, {
-
-  foreignKey: "user_id",
-
-  as: "otps",
-
+  foreignKey: 'user_id',
+  as: 'otps',
 });
 
 Otp.belongsTo(User, {
-
-  foreignKey: "user_id",
-
-  as: "user",
-
+  foreignKey: 'user_id',
+  as: 'user',
 });
 
 /* 3. USER ↔ AUTHENTICATION TYPE (Many-to-One) */
 
 AuthenticationType.hasMany(User, {
-
-  foreignKey: "auth_type_id",
-
-  as: "users",
-
+  foreignKey: 'auth_type_id',
+  as: 'users',
 });
 
 User.belongsTo(AuthenticationType, {
+  foreignKey: 'auth_type_id',
 
-  foreignKey: "auth_type_id",
-
-  as: "authType",
-
+  as: 'authType',
 });
 
 /* 4. USER ↔ ROLE (Many-to-One) */
 
 Role.hasMany(User, {
+  foreignKey: 'role_id',
 
-  foreignKey: "role_id",
-
-  as: "users",
-
+  as: 'users',
 });
 
 User.belongsTo(Role, {
+  foreignKey: 'role_id',
 
-  foreignKey: "role_id",
-
-  as: "role",
-
+  as: 'role',
 });
 
 /* 5. USER ↔ CORPORATE (Many-to-One) */
 
 Corporate.hasMany(User, {
+  foreignKey: 'client_group_id',
 
-  foreignKey: "corporate_id",
-
-  as: "users",
-
+  as: 'users',
 });
 
 User.belongsTo(Corporate, {
+  foreignKey: 'client_group_id',
 
-  foreignKey: "corporate_id",
-
-  as: "corporate",
-
+  as: 'corporate',
 });
 
-/* 6. USER ↔ COMPANY (Many-to-One)  ✅ NEW */
+/* 6. USER ↔ COMPANY (Many-to-One) */
 
-Company.hasMany(User, {
-
-  foreignKey: "company_id",
-
-  as: "users",
-
+User.belongsToMany(Company, {
+  through: UserCompany,
+  foreignKey: 'user_id',
+  otherKey: 'client_id',
+  as: 'companies',
 });
 
-User.belongsTo(Company, {
-
-  foreignKey: "company_id",
-
-  as: "company",
-
+Company.belongsToMany(User, {
+  through: UserCompany,
+  foreignKey: 'client_id',
+  otherKey: 'user_id',
+  as: 'users',
 });
 
 /* 7. USER ↔ ACCESS RIGHTS (Many-to-Many) */
 
 User.belongsToMany(AccessRight, {
-
   through: UserAccessRight,
 
-  foreignKey: "user_id",
+  foreignKey: 'user_id',
 
-  otherKey: "access_right_id",
+  otherKey: 'access_right_id',
 
-  as: "accessRights",
-
+  as: 'accessRights',
 });
 
 AccessRight.belongsToMany(User, {
-
   through: UserAccessRight,
 
-  foreignKey: "access_right_id",
+  foreignKey: 'access_right_id',
 
-  otherKey: "user_id",
+  otherKey: 'user_id',
 
-  as: "users",
-
+  as: 'users',
 });
 
+/* 8. Corporate to Company */
+
+Corporate.hasMany(Company, {
+  foreignKey: 'client_group_id',
+  as: 'companies',
+});
+
+Company.belongsTo(Corporate, {
+  foreignKey: 'client_group_id',
+  as: 'corporate',
+});
+
+/* 9. ROLE TYPE ↔ ACCESS RIGHTS */
+AccessRight.hasMany(RoleAccessRight, {
+  foreignKey: 'access_right_id',
+  as: 'roleMappings',
+});
+RoleAccessRight.belongsTo(AccessRight, {
+  foreignKey: 'access_right_id',
+  as: 'accessRight',
+});
 /* =====================================================
-
    EXPORT DB
-
 ===================================================== */
 
 const db = {
-
   sequelize,
-
   User,
-
   Otp,
-
   RefreshToken,
-
   AuthenticationType,
-
   Role,
-
   Corporate,
-
   Company,
-
   AccessRight,
-
   UserAccessRight,
-
+  RoleAccessRight,
+  AuditLog,
 };
 
 export default db;
- 
+await sequelize.sync();
