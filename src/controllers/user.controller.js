@@ -9,6 +9,8 @@ import { fetchUserById, fetchUserByName } from '../services/user.service.js';
 import { userCreatedOtp, userCreatedAD } from '../utils/mailContent.js';
 import { createConnection } from 'net';
 import { createEmailOtpForUser } from '../services/otp.service.js';
+import { logAudit } from '../utils/auditLogger.js';
+
 const { User, Role, Corporate, Company, AuthenticationType, AccessRight } = db;
 /**
  * ----------------------------------------------------
@@ -298,6 +300,13 @@ export async function userPolicyAcceptance(req, res) {
       },
       { where: { id: id } }
     );
+    await logAudit({
+      user,
+      action: 'POLICY_ACCEPTED',
+      status: 'SUCCESS',
+      reason: 'Policy Accepted Succesfully',
+      req,
+    });
     return res.status(200).json({ message: 'Policies are Accepted' });
   } catch (error) {
     console.error('Error updating policy acceptance:', error);
