@@ -1,6 +1,5 @@
 node_modules
 .env.dev
-.env
 .env.qa
 .env.uat
 /uploads
