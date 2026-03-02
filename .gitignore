@@ -1,5 +1,5 @@
 node_modules
-.env.dev
+.env.development
 .env
 .env.qa
 .env.uat
