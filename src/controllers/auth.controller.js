@@ -190,7 +190,7 @@ export async function login(req, res) {
       req,
     });
 
-    console.error('Login Error:', error);
+    console.log('Login Error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
