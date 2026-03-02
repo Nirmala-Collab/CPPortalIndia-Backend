@@ -5,7 +5,8 @@ export async function sendFaqEmail(req, res) {
   console.log('FAQ Email Req Body:', req.body);
   await sendEmail({
     to: user_email,
-    cc: [rmEmail],
+    bcc: [rmEmail],
+
     subject: faqRmNotification.subject,
     html: faqRmNotification.body(user_name, user_company),
   });

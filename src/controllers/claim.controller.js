@@ -1,14 +1,36 @@
+import { request } from 'http';
 import Document from '../models/document.model.js';
 import { sendEmail } from '../services/email.service.js';
 import { uploadDocClient, rmCallbackRequest } from '../utils/mailContent.js';
+import { v4 as uuidv4 } from 'uuid';
+
+const requestId = uuidv4();
 export async function requestRmCallback(req, res) {
+  let email, rm, req_no;
   const { refId } = req.params.refId;
-  const { claim_manager_email, insurer_claim_no, user_email, user_name } = req.body;
+  const {
+    claim_manager_email,
+    insurer_claim_no,
+    rm_email,
+    insurer_policy_no,
+    src,
+    user_email,
+    user_name,
+  } = req.body;
+  if (src == 'RENEWAL') {
+    email = rm_email;
+    req_no = insurer_policy_no;
+  } else {
+    email = claim_manager_email;
+    req_no = insurer_claim_no;
+    rm = rm_email;
+  }
   await sendEmail({
     to: user_email,
-    cc: [claim_manager_email],
+    cc: rm,
+    bcc: email,
     subject: rmCallbackRequest.subject,
-    html: rmCallbackRequest.body(insurer_claim_no, user_name),
+    html: rmCallbackRequest.body(requestId, user_name),
   });
   res.json({ message: 'Callback request sent' });
 }
@@ -37,10 +59,12 @@ export async function uploadClaimDocument(req, res) {
 
     if (claims_manager_email || rm_email) {
       await sendEmail({
-        to: 'venkata.korumilli@tcs.com',
+        to: user_email,
+        bcc: claims_manager_email,
+        cc: rm_email,
         // cc: [claims_manager_email, rm_email].filter(Boolean),
         subject: uploadDocClient.subject,
-        html: uploadDocClient.body(claims_id),
+        html: uploadDocClient.body(requestId, claims_id),
       });
     }
 
