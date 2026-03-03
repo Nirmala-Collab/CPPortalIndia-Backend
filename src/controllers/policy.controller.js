@@ -1,6 +1,9 @@
 import Document from '../models/document.model.js';
 import { sendEmail } from '../services/email.service.js';
 import { uploadDeclaration } from '../utils/mailContent.js';
+import { v4 as uuidv4 } from 'uuid';
+
+const requestId = uuidv4();
 export async function uploadPolicyDeclaration(req, res) {
   try {
     const { refId } = req.params;
@@ -24,9 +27,9 @@ export async function uploadPolicyDeclaration(req, res) {
     });
     await sendEmail({
       to: user_email,
-      cc: [policy_manager_email],
+      bcc: [policy_manager_email],
       subject: uploadDeclaration.subject,
-      html: uploadDeclaration.body(policy_no),
+      html: uploadDeclaration.body(requestId),
     });
     res.json({ message: 'Declaration uploaded successfully' });
   } catch (error) {
