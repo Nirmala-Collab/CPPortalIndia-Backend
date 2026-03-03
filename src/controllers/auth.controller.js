@@ -490,7 +490,7 @@ export async function verifyOtp(req, res) {
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
       user: userData,
-      rmData: rmData,
+      rmEmail: rmData.email,
       policyAccepted: user.policyAccepted,
     });
   } catch (error) {
