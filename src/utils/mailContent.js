@@ -8,13 +8,13 @@ export const authentication = {
 <p>Please use the following One-Time Password(OTP) to proceed with your login.</p>
 <h2>OTP: ${otpCode}</h2>
 <p>This OTP is valid for <strong>2 minutes</strong> and can be used only once.</p>
-<p>If you did not request this OTP, please ignore this email or contact our support team immediately.</p><p>For security reasons, please do not share your OTP with anyone.</p><p>Warm regards,</p><p>Team Evolv</p> <p>Lockton India Insurance Broking and Advisory PrivateLimited</p>`,
+<p>If you did not request this OTP, please ignore this email or contact our support team immediately.</p><p>For security reasons, please do not share your OTP with anyone.</p><p>Warm regards,</p><p>Team Evolv</p> <p>LIBAL</p>`,
 };
 
 export const uploadDocClient = {
   subject: 'Claims Document Uploaded Successfully – Evolv Portal - Do not Reply!!',
   body: (claimId) =>
-    `<p>Dear Customer,</p> <p>We would like to inform you that your claims document has been successfully uploaded on the Evolv Portal.</p> <p>Document Details</p> <h2>Uploaded on: ${new Date().toLocaleString()}</h2><h2>Reference ID: ${claimId}</h2><h2>Status: Submitted / Under Review</h2><p>Our team will review the submitted document andupdate you in case any additional information or actionis required from your end.</p><p>You may log in to the evolv Portal at any time to view the status of claims.</p><p>Warm regards,</p><p>Team Evolv</p> <p>Lockton India Insurance Broking and Advisory PrivateLimited</p>`,
+    `<p>Dear Customer,</p> <p>We would like to inform you that your claims document has been successfully uploaded on the Evolv Portal.</p> <p>Document Details</p> <h2>Uploaded on: ${new Date().toLocaleString()}</h2><h2>Reference ID: ${claimId}</h2><h2>Status: Submitted / Under Review</h2><p>Our team will review the submitted document andupdate you in case any additional information or actionis required from your end.</p><p>You may log in to the evolv Portal at any time to view the status of claims.</p><p>Warm regards,</p><p>Team Evolv</p> <p>Lockton India Insurance Broking and Advisory Private Limited</p>`,
 };
 export const uploadDeclaration = {
   subject: 'Declaration Uploaded Successfully – Evolv Portal - Do not Reply!!',
@@ -32,8 +32,7 @@ the status or a copy of the uploaded
 declaration.
 Warm Regards,
 Team Evolv
-Lockton India Insurance Broking and Advisory Private
-Limited`,
+Lockton India Insurance Broking and Advisory Private Limited`,
 };
 
 export const rmCallbackRequest = {
@@ -58,8 +57,7 @@ assisting you.</p>
 Warm Regards,</p>
 <p>Team Evolv</p>
 <p>
-Lockton India Insurance Broking and Advisory Private
-Limited </p
+Lockton India Insurance Broking and Advisory Private Limited </p
 `,
 };
 
@@ -87,8 +85,7 @@ choosing ${companyName}.</p>
 Warm Regards,</p>
 <p>Team Evolv</p>
 <p>
-Lockton India Insurance Broking and Advisory Private
-Limited</p>
+Lockton India Insurance Broking and Advisory Private Limited</p>
 `,
 };
 export const userCreatedOtp = {
