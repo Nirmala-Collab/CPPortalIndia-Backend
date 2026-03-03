@@ -4,7 +4,7 @@ import { generateJwtToken } from '../services/jwt.service.js';
 import { createEmailOtpForUser } from '../services/otp.service.js';
 import { sendOtpEmail } from '../services/otp.service.js';
 import { createRefreshToken, invalidateRefreshToken } from '../services/refreshToken.service.js';
-import { fetchUserById } from '../services/user.service.js';
+import { fetchUserById, fetchUserByName } from '../services/user.service.js';
 import { logAudit } from '../utils/auditLogger.js';
 
 const { User, Otp, AuthenticationType, Role, AccessRight } = db;
@@ -476,7 +476,7 @@ export async function verifyOtp(req, res) {
     const jwtToken = generateJwtToken({ userId: user.id });
     const refreshTokenObj = await createRefreshToken(user.id);
     const userData = await fetchUserById(user.id);
-
+    const rmData = await fetchUserByName(userData.relationshipManager);
     await logAudit({
       user,
       action: 'VERIFY_OTP',
@@ -490,6 +490,7 @@ export async function verifyOtp(req, res) {
       token: jwtToken,
       refreshToken: refreshTokenObj.token,
       user: userData,
+      rmData: rmData,
       policyAccepted: user.policyAccepted,
     });
   } catch (error) {
