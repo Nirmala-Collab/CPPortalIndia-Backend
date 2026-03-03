@@ -5,6 +5,7 @@ export const authentication = {
   subject: 'Your One-Time Password (OTP) for Evolv - Lockton Customer Portal - Do not Reply!!',
   body: (otpCode) => `<p>Dear Customer,</p>
 <p>We received a request to log in to the Evolv Portal.</p>
+<p>Please use the following One-Time Password(OTP) to proceed with your login.</p>
 <h2>OTP: ${otpCode}</h2>
 <p>This OTP is valid for <strong>2 minutes</strong> and can be used only once.</p>
 <p>If you did not request this OTP, please ignore this email or contact our support team immediately.</p><p>For security reasons, please do not share your OTP with anyone.</p><p>Warm regards,</p><p>Team Evolv</p> <p>Lockton India Insurance Broking and Advisory PrivateLimited</p>`,
