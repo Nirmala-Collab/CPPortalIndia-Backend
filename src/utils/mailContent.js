@@ -8,7 +8,7 @@ export const authentication = {
 <p>Please use the following One-Time Password(OTP) to proceed with your login.</p>
 <h2>OTP: ${otpCode}</h2>
 <p>This OTP is valid for <strong>2 minutes</strong> and can be used only once.</p>
-<p>If you did not request this OTP, please ignore this email or contact our support team immediately.</p><p>For security reasons, please do not share your OTP with anyone.</p><p>Warm regards,</p><p>Team Evolv</p> <p>LIBAL</p>`,
+<p>If you did not request this OTP, please ignore this email or contact our support team immediately.</p><p>For security reasons, please do not share your OTP with anyone.</p><p>Warm regards,</p><p>Evolv Portal Team</p> <p>LIBAL</p>`,
 };
 
 export const uploadDocClient = {
