@@ -54,13 +54,23 @@ export async function createUser(req, res) {
       });
     }
 
-    const nameTrimmed = fullName.trim();
-    if (!/^[A-Za-z]+$/.test(nameTrimmed)) {
+    const nameRaw = req.body?.fullName ?? '';
+    const nameTrimmed = nameRaw
+      .replace(/\u00A0/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!nameTrimmed) {
+      return res.status(400).json({
+        message: 'Name should not be empty',
+      });
+    }
+    const NAME_REGEX = /^[A-Za-z]+( [A-Za-z]+)*$/;
+    console.log('name', nameTrimmed);
+    if (!NAME_REGEX.test(nameTrimmed)) {
       return res.status(400).json({
         message: 'Name should not contain special characters',
       });
     }
-
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
@@ -185,13 +195,22 @@ export async function updateUser(req, res) {
         message: 'All fields are mandatory for update',
       });
     }
-    const nameTrimmed = fullName.trim();
-    if (!/^[A-Za-z]+$/.test(nameTrimmed)) {
+    const nameRaw = req.body?.fullName ?? '';
+    const nameTrimmed = nameRaw
+      .replace(/\u00A0/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!nameTrimmed) {
+      return res.status(400).json({
+        message: 'Name should not be empty',
+      });
+    }
+    const NAME_REGEX = /^[A-Za-z]+( [A-Za-z]+)*$/;
+    if (!NAME_REGEX.test(nameTrimmed)) {
       return res.status(400).json({
         message: 'Name should not contain special characters',
       });
     }
-
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
