@@ -54,6 +54,13 @@ export async function createUser(req, res) {
       });
     }
 
+    const nameTrimmed = fullName.trim();
+    if (!/^[A-Za-z]+$/.test(nameTrimmed)) {
+      return res.status(400).json({
+        message: 'Name should not contain special characters',
+      });
+    }
+
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
@@ -178,8 +185,13 @@ export async function updateUser(req, res) {
         message: 'All fields are mandatory for update',
       });
     }
+    const nameTrimmed = fullName.trim();
+    if (!/^[A-Za-z]+$/.test(nameTrimmed)) {
+      return res.status(400).json({
+        message: 'Name should not contain special characters',
+      });
+    }
 
-    console.log('Client GroupId......:', req.body, phone);
     if (!Array.isArray(accessRights) || accessRights.length === 0) {
       return res.status(400).json({
         message: 'At least one access right must be selected',
