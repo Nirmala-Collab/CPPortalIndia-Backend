@@ -4,8 +4,8 @@ import { sendEmail } from '../services/email.service.js';
 import { uploadDocClient, rmCallbackRequest } from '../utils/mailContent.js';
 import { v4 as uuidv4 } from 'uuid';
 
-const requestId = uuidv4();
 export async function requestRmCallback(req, res) {
+  const requestId = uuidv4();
   let email, rm, req_no;
   const { refId } = req.params.refId;
   const {
