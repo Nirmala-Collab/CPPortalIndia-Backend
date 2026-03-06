@@ -271,7 +271,27 @@ export async function sendOtp(req, res) {
         });
       }
 
-      const { otpCode } = await createEmailOtpForUser(user);
+      
+// create OTP (may throw 429 if within cooldown, per our service change)
+let otpCode;
+try {
+  const out = await createEmailOtpForUser(user);
+  otpCode = out.otpCode;
+} catch (e) {
+  if (e.status === 429) {
+    await logAudit({
+      user,
+      action: 'SEND_OTP',
+      status: 'FAILED',
+      reason: e.message,
+      failure_code: 'OTP_RATE',
+      req,
+    });
+    return res.status(429).json({ message: e.message });
+  }
+  throw e; // any other error bubbles to your 500 handler
+}
+
       try {
         await sendOtpEmail(user.email, otpCode);
       } catch (e) {
