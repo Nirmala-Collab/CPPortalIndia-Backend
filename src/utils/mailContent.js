@@ -63,7 +63,7 @@ Lockton India Insurance Broking and Advisory Private Limited </p
 
 export const faqRmNotification = {
   subject: 'We’ve received your query – Our team is reviewing it - Do not Reply!!',
-  body: (userName, companyName) =>
+  body: (requestId, userName, companyName) =>
     `<p>Dear ${userName},</p>
 <p>
 Thank you for reaching out to us.
@@ -72,9 +72,9 @@ our team is currently reviewing the details. We will get
 back to you shortly with the required information or
 assistance.</p>
 <p>
-Reference details:</p>
+Reference details:${requestId}</p>
 <ul>
-<li>Reference ID: 201</li>
+<li>Reference ID: </li>
 <li>Date & Time: ${new Date().toLocaleString()}</li>
 </ul>
 <p>If you have any additional information to share in the
