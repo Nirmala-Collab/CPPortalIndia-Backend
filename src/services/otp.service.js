@@ -11,7 +11,7 @@ const OTP_RESEND_COOLDOWN_MS = 60_000; // 60 seconds
 export async function createEmailOtpForUser(user) {
   // --- Cooldown check: block another OTP within 60 seconds ---
   const latest = await Otp.findOne({
-    where: { userId: user.iAd, otpType: 'EMAIL' },
+    where: { userId: user.id, otpType: 'EMAIL' },
     order: [['createdAt', 'DESC']],
   });
   if (latest) {
@@ -45,7 +45,6 @@ export async function createEmailOtpForUser(user) {
   });
   return { otpCode, otpRecord };
 }
-
 
 export async function sendOtpEmail(toEmail, otpCode) {
   return sendEmail({
