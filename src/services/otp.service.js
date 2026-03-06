@@ -6,8 +6,24 @@ import { sendEmail } from './email.service.js';
 
 const { Otp } = db;
 const OTP_EXPIRY_MINUTES = 2;
+const OTP_RESEND_COOLDOWN_MS = 60_000; // 60 seconds
 
 export async function createEmailOtpForUser(user) {
+  // --- Cooldown check: block another OTP within 60 seconds ---
+  const latest = await Otp.findOne({
+    where: { userId: user.iAd, otpType: 'EMAIL' },
+    order: [['createdAt', 'DESC']],
+  });
+  if (latest) {
+    const ageMs = Date.now() - new Date(latest.createdAt).getTime();
+    if (ageMs < OTP_RESEND_COOLDOWN_MS) {
+      const left = Math.ceil((OTP_RESEND_COOLDOWN_MS - ageMs) / 1000);
+      const err = new Error(`OTP recently sent. Please retry after ${left}s.`);
+      err.status = 429; // Too Many Requests
+      throw err;
+    }
+  }
+
   const otpCode = generateNumericOtp(5);
   const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
   await Otp.update(
@@ -29,6 +45,7 @@ export async function createEmailOtpForUser(user) {
   });
   return { otpCode, otpRecord };
 }
+
 
 export async function sendOtpEmail(toEmail, otpCode) {
   return sendEmail({
