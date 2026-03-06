@@ -271,6 +271,8 @@ export async function sendOtp(req, res) {
         });
       }
 
+      // create OTP (may throw 429 if within cooldown, per our service change)
+
       const { otpCode } = await createEmailOtpForUser(user);
       try {
         await sendOtpEmail(user.email, otpCode);

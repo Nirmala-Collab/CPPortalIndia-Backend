@@ -6,7 +6,6 @@ import { sendEmail } from './email.service.js';
 
 const { Otp } = db;
 const OTP_EXPIRY_MINUTES = 2;
-
 export async function createEmailOtpForUser(user) {
   const otpCode = generateNumericOtp(5);
   const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);

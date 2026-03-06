@@ -72,9 +72,9 @@ our team is currently reviewing the details. We will get
 back to you shortly with the required information or
 assistance.</p>
 <p>
-Reference details:${requestId}</p>
+Reference details:</p>
 <ul>
-<li>Reference ID: </li>
+<li>Reference ID:${requestId} </li>
 <li>Date & Time: ${new Date().toLocaleString()}</li>
 </ul>
 <p>If you have any additional information to share in the
