@@ -39,7 +39,7 @@ export const rmCallbackRequest = {
   subject:
     'We’ve received your request – Our Relationship Manager will call you shortly - Do not Reply!!',
   body: (requestId, userName) =>
-    `<p>Dear ${userName}</p>,
+    `<p>Dear ${userName},</p>
 <p>Thank you for reaching out to us.
 We have received your request for a call back. Your
 Relationship Manager will get in touch with you shortly
