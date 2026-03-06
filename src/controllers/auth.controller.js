@@ -421,44 +421,70 @@ export async function verifyOtp(req, res) {
       return res.status(400).json({ message: 'OTP expired' });
     }
 
-    // Match check
-    let otpWarningMessage = 'Invalid OTP';
+    // ---- Match check with exponential backoff & hard attempt cap ----
+let otpWarningMessage = 'Invalid OTP';
 
-    if (otpRecord.otpCode !== otp) {
-      otpRecord.attempts += 1;
-      await otpRecord.save();
+// If already locked (defense-in-depth)
+if (otpRecord.locked && otpRecord.lockedUntil && new Date() < otpRecord.lockedUntil) {
+  return res.status(423).json({
+    message: 'Account is locked due to repeated invalid OTP attempts. Please try later or contact support.'
+  });
+}
 
-      // 4th attempt warning
-      if (otpRecord.attempts === OTP_MAX_ATTEMPTS - 1) {
-        otpWarningMessage =
-          'Warning: You have 1 attempt left. If you attempt one more time, your account will be locked for 1 hour.';
-      }
+if (otpRecord.otpCode !== otp) {
+  // Increment attempts
+  otpRecord.attempts = (otpRecord.attempts || 0) + 1;
 
-      // Lock on max attempts
-      if (otpRecord.attempts >= OTP_MAX_ATTEMPTS) {
-        otpRecord.isUsed = true;
-        otpRecord.locked = true;
-        otpRecord.lockedUntil = new Date(Date.now() + 60 * 60 * 1000);
-        await otpRecord.save();
+  // Exponential backoff: 1s, 2s, 4s, 8s (capped at 8s)
+  const backoffMs = Math.min(8000, 1000 * Math.pow(2, Math.max(0, otpRecord.attempts - 1)));
 
-        otpWarningMessage =
-          'Your account is now locked due to multiple failed attempts. Please contact your Relationship Manager (RM) for assistance.';
-      }
+  // Hard cap at 5 attempts
+  const MAX_ATTEMPTS = OTP_MAX_ATTEMPTS || 5;
+  if (otpRecord.attempts >= MAX_ATTEMPTS) {
+    otpRecord.isUsed = true; // retire this OTP
+    otpRecord.locked = true;
+    otpRecord.lockedUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour lock
+    await otpRecord.save();
 
-      await logAudit({
-        user,
-        action: 'VERIFY_OTP',
-        status: 'FAILED',
-        reason: 'Invalid OTP',
-        failure_code: 'VERIFY_005',
-        req,
-      });
+    await logAudit({
+      user,
+      action: 'VERIFY_OTP',
+      status: 'FAILED',
+      reason: 'OTP locked after max invalid attempts',
+      failure_code: 'VERIFY_LOCK',
+      req,
+    });
 
-      return res.status(400).json({
-        message: otpWarningMessage,
-        attempts: otpRecord.attempts,
-      });
-    }
+    return res.status(423).json({
+      message: 'Too many invalid OTP attempts. Your account is temporarily locked for 1 hour.'
+    });
+  }
+
+  await otpRecord.save();
+
+  await logAudit({
+    user,
+    action: 'VERIFY_OTP',
+    status: 'FAILED',
+    reason: `Invalid OTP (attempt ${otpRecord.attempts})`,
+    failure_code: 'VERIFY_OTP_INVALID',
+    req,
+  });
+
+  // Slow down brute-forcing a bit on the server side
+  await new Promise(r => setTimeout(r, backoffMs));
+
+  if (otpRecord.attempts === MAX_ATTEMPTS - 1) {
+    otpWarningMessage = 'Warning: One attempt left before a 1-hour lockout.';
+  }
+
+  return res.status(400).json({
+    message: otpWarningMessage,
+    attempts: otpRecord.attempts,
+    retryAfterSeconds: Math.ceil(backoffMs / 1000)
+  });
+}
+
 
     // -------------------------------
     // ✅ SUCCESS: Increment login count
