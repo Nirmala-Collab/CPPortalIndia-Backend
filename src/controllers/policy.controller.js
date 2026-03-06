@@ -3,8 +3,8 @@ import { sendEmail } from '../services/email.service.js';
 import { uploadDeclaration } from '../utils/mailContent.js';
 import { v4 as uuidv4 } from 'uuid';
 
-const requestId = uuidv4();
 export async function uploadPolicyDeclaration(req, res) {
+  const requestId = uuidv4();
   try {
     const { refId } = req.params;
     const { policy_manager_email, policy_no, user_email, user_name } = req.body;
